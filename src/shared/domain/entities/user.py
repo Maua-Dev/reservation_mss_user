@@ -1,5 +1,6 @@
 import abc
 import re
+from typing import Optional
 from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.domain.enums.role_enum import ROLE
 
@@ -7,7 +8,7 @@ class User(abc.ABC):
     name: str
     email: str
     user_id : str
-    ra: str
+    ra: Optional[str] = None
     role : ROLE 
     confirm_user : bool 
 
@@ -59,7 +60,12 @@ class User(abc.ABC):
 
     @staticmethod
     def validate_ra(ra: str) -> bool:
+        if ra is None:
+            return True 
         if not isinstance(ra, str) or not ra:
+            return False
+        ra_regex = r'^\d{2}\.\d{5}-\d$'
+        if re.match(ra_regex, ra) is None:
             return False
         return True
 
