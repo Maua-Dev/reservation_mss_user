@@ -82,6 +82,17 @@ class User(abc.ABC):
         return True
 
 
+    def to_dict(self):
+        return {
+            "user_id":self.user_id,
+            "name":self.name,
+            "email":self.email,
+            "ra":self.ra,
+            "role":self.role.value,
+            "confirm_user":self.confirm_user
+
+        }
+
 
 
 
