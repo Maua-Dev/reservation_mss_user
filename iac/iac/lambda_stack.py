@@ -1,17 +1,26 @@
 import os
+from typing import Optional
+
 from aws_cdk import (
     aws_lambda as lambda_,
-    NestedStack, Duration
+    NestedStack, Duration,
+    aws_apigateway as apigw,
 )
 from constructs import Construct
-from aws_cdk.aws_apigateway import Resource, LambdaIntegration
+from aws_cdk.aws_apigateway import Resource, LambdaIntegration, TokenAuthorizer
 
 
 class LambdaStack(Construct):
     functions_that_need_dynamo_permissions = []
 
-    def create_lambda_api_gateway_integration(self, module_name: str, method: str, mss_student_api_resource: Resource,
-                                              environment_variables: dict = {"STAGE": "TEST"}):
+    def create_lambda_api_gateway_integration(
+            self,
+            module_name: str,
+            method: str,
+            mss_student_api_resource: Resource,
+            environment_variables: dict = {"STAGE": "TEST"},
+            authorizer: Optional[TokenAuthorizer] = None
+    ):
         function = lambda_.Function(
             self, module_name.title(),
             code=lambda_.Code.from_asset(f"../src/modules/{module_name}"),
@@ -22,9 +31,15 @@ class LambdaStack(Construct):
             timeout=Duration.seconds(15)
         )
 
-        mss_student_api_resource.add_resource(module_name.replace("_", "-")).add_method(method,
-                                                                                        integration=LambdaIntegration(
-                                                                                            function))
+        mss_student_api_resource.add_resource(
+            module_name.replace("_", "-")
+        ).add_method(
+            method,
+            integration=LambdaIntegration(
+                function
+            ),
+            authorizer=authorizer
+        )
 
         return function
 
@@ -36,7 +51,22 @@ class LambdaStack(Construct):
                                                  compatible_runtimes=[lambda_.Runtime.PYTHON_3_9]
                                                  )
 
-        self.lambda_power_tools = lambda_.LayerVersion.from_layer_version_arn(self, "Lambda_Power_Tools", layer_version_arn="arn:aws:lambda:us-east-2:017000801446:layer:AWSLambdaPowertoolsPythonV2:22")
+        self.lambda_power_tools = lambda_.LayerVersion.from_layer_version_arn(self, "Lambda_Power_Tools",
+                                                                              layer_version_arn="arn:aws:lambda:us-east-2:017000801446:layer:AWSLambdaPowertoolsPythonV2:22")
+
+        # TODO -> Olha o método de create_lambda_api_gateway_integration, dê uma olhada no Function()
+        # TODO -> Crie a Lambda do Authorizer, passando o Path dele certinho.
+        # TODO -> Utilize o apigateway para criar o TokenAuthorizer
+
+        authorizer_lambda = lambda_.Function()
+        apigw.TokenAuthorizer(
+            self, "Authorizer",
+            handler=authorizer_lambda,
+            identity_source=apigw.IdentitySource.header("Authorization"),
+            authorizer_name="Authorizer",
+            results_cache_ttl=Duration.minutes(5)
+        )
+
 
         self.get_user_function = self.create_lambda_api_gateway_integration(
             module_name="get_user",
@@ -67,4 +97,4 @@ class LambdaStack(Construct):
         )
 
         self.functions_that_need_dynamo_permissions = [self.get_user_function, self.create_user_function,
-                                                  self.delete_user_function, self.update_user_function]
+                                                       self.delete_user_function, self.update_user_function]
