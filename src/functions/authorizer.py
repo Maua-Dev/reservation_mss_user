@@ -49,18 +49,15 @@ def lambda_handler(event, context):
         if not re.match(email_regex, user_data.get("mail", "")):
             return generate_policy("user", "Deny", methodArn)
 
-        # Creating the user context
-        user_context = {
-            "id": user_data.get("id", ""),  # User ID
-            "email": user_data.get("mail", ""),  # User email
-            "displayName": user_data.get("displayName", ""),  # User display name
-        }
+
 
         # TODO -> implementar o método de get user, pode ser pelo e-mail ou pelo user_id, usando o Repositorio
+        user_repo = Environments.get_user_repo()
+        user = user_repo.get_user(user_data.get("id"))
 
         # Generating the policy document
         return generate_policy(
-            user_data.get("id", "user"), "Allow", methodArn, user_context
+            user_data.get("id", "user"), "Allow", methodArn, user.to_dict()
         )
 
     # Handling exceptions
