@@ -1,6 +1,6 @@
 from typing import List, Optional
-from shared.domain.entities.user import User
-from src.shared.domain.enums.role_enum import RoleEnum
+from src.shared.domain.entities.user import User
+from src.shared.domain.enums.role_enum import ROLE
 from src.shared.domain.repositories.user_repository_interface import IUserRepository
 
 class UserRepositoryMock(IUserRepository):
@@ -13,7 +13,7 @@ class UserRepositoryMock(IUserRepository):
                 email="rodas@gmail.com", 
                 user_id="93bc6ada-c0d1-7054-26ab-e17414c48ae3", 
                 ra=None,
-                role=RoleEnum.ADMIN, 
+                role=ROLE.ADMIN, 
                 confirm_user=True
             ),
             User(
@@ -21,7 +21,7 @@ class UserRepositoryMock(IUserRepository):
                 email="26.96379-5@maua.br",
                 user_id="93bc6ada-c0d1-7054-26ab-e17414c48ae5",
                 ra="26.96379-5",
-                role=RoleEnum.ADMIN,
+                role=ROLE.ADMIN,
                 confirm_user=False             
             ),
             User(
@@ -29,7 +29,7 @@ class UserRepositoryMock(IUserRepository):
                 email="29.91279-6@maua.br", 
                 user_id="93bc6ada-c0d1-7054-26ab-e17414c98ae4", 
                 ra="29.91279-6",
-                role=RoleEnum.STUDENT, 
+                role=ROLE.STUDENT, 
                 confirm_user=True
             ),
             User(
@@ -37,7 +37,7 @@ class UserRepositoryMock(IUserRepository):
                 email="gi@hotmail.com",
                 user_id="93bc6ada-c0d1-7054-26ab-e17454c48ae6",
                 ra=None,
-                role=RoleEnum.PROFESSOR,
+                role=ROLE.PROFESSOR,
                 confirm_user=True
             ),
             User(
@@ -45,15 +45,15 @@ class UserRepositoryMock(IUserRepository):
                 email="berti@gmail.com",
                 user_id="93bc6ada-c0d1-8754-26ab-e17414c48ae7",
                 ra=None,
-                role=RoleEnum.PROFESSOR,
+                role=ROLE.PROFESSOR,
                 confirm_user=False
             ),
             User(
                 name ="Gustavo Gus",
-                email="timão@gmail.com",
+                email="timao@gmail.com",
                 user_id="77bc6ada-c0d1-8754-26ab-e17414c48ae8",
                 ra=None,
-                role=RoleEnum.ADMIN,
+                role=ROLE.ADMIN,
                 confirm_user=False
             ),
             User(
@@ -61,7 +61,7 @@ class UserRepositoryMock(IUserRepository):
                 email="12.12345-8@maua.br",
                 user_id="93bc6ada-c0e1-7054-26ab-e17414c48ae9",
                 ra="12.12345-8",
-                role=RoleEnum.PROFESSOR,
+                role=ROLE.PROFESSOR,
                 confirm_user=False
             ),
             User(
@@ -69,7 +69,7 @@ class UserRepositoryMock(IUserRepository):
                 email="springfield@gmail.com", 
                 user_id="93bc6ada-c0d1-7054-26ab-e17414c98ag7", 
                 ra="29.89779-6",
-                role=RoleEnum.STUDENT, 
+                role=ROLE.STUDENT, 
                 confirm_user=False
             )
 ]
@@ -78,14 +78,17 @@ class UserRepositoryMock(IUserRepository):
         self.users_list.append(user)
         return user
     
-    def get_user_by_id(self, user_id: str) -> User:
+    def get_user(self, user_id: str) -> User:
         for user in self.users_list:
             if user.user_id == user_id:
                 return user
         return None
     
-    def update_user_by_id(self, user_id: str, new_name : Optional[str] = None, new_email : Optional[str] = None, new_ra : Optional[str] = None):
-        user_to_update = self.get_user_by_id(user_id)
+    def get_all_users(self) -> List[User]:
+        return self.users_list
+    
+    def update_user(self, user_id: str, new_name : Optional[str] = None, new_email : Optional[str] = None, new_ra : Optional[str] = None):
+        user_to_update = self.get_user(user_id)
 
         if user_to_update is None:
             return None 
@@ -101,7 +104,7 @@ class UserRepositoryMock(IUserRepository):
 
         return user_to_update
 
-    def delete_user_by_id(self, user_id: str) -> Optional[User]:
+    def delete_user(self, user_id: str) -> Optional[User]:
         for user in self.users_list:
             if user.user_id == user_id:
                 self.users_list.remove(user)
