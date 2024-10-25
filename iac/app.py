@@ -4,7 +4,7 @@ import os
 import aws_cdk as cdk
 from adjust_layer_directory import adjust_layer_directory
 
-from iac.template_stack import TemplateStack
+from iac.stack import TemplateStack
 
 
 
@@ -34,7 +34,7 @@ else:
     stage = 'TEST'
 
 tags = {
-    'project': 'Template',
+    'project': 'MauaReservation',
     'stage': stage,
     'stack': 'BACK',
     'owner': 'DevCommunity'
