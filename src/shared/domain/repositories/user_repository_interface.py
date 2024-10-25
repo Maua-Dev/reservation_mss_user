@@ -14,7 +14,7 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_all_user(self) -> List[User]:
+    def get_all_users(self) -> List[User]:
         pass
 
     @abstractmethod
@@ -32,12 +32,5 @@ class IUserRepository(ABC):
     def update_user(self, user_id: int, new_name: str) -> User:
         """
         If user not found raise NoItemsFound
-        """
-        pass
-
-    @abstractmethod
-    def get_user_counter(self) -> int:
-        """
-        Returns the number of all users that have ever been created
         """
         pass
