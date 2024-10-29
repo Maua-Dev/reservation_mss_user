@@ -76,12 +76,23 @@ class TestCourt:
                 confirm_user=True
             )
 
-    def test_invalid_user_id(self):
+    def test_invalid_user_id_type_int(self):
         with pytest.raises(EntityError):
             User(
                 name='Leonardo Luiz Seixas Iorio',
-                email='50.00800-0',
+                email='50.00800-0@maua.br',
                 user_id=1,
+                ra='55.00800-0',
+                role=ROLE.STUDENT,
+                confirm_user=True
+            )
+
+    def test_invalid_user_id_wrong_str_type(self):
+        with pytest.raises(EntityError):
+            User(
+                name='Leonardo Luiz Seixas Iorio',
+                email='50.00800-0@maua.br',
+                user_id='n',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -91,7 +102,7 @@ class TestCourt:
         with pytest.raises(TypeError):
             User(
                 name='Leonardo Luiz Seixas Iorio',
-                email='50.00800-0',
+                email='50.00800-0@maua.br',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -170,4 +181,3 @@ class TestCourt:
                 ra='55.00800-0',
                 role=ROLE.STUDENT
             )
-
