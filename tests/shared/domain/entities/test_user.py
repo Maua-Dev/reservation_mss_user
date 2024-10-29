@@ -4,13 +4,13 @@ from src.shared.domain.entities.user import User
 from src.shared.domain.enums.role_enum import ROLE
 from src.shared.helpers.errors.domain_errors import EntityError
 
-class TestCourt:
+class TestUserEntity:
 
     def test_user(self):
         userEntity = User(
             name='Leonardo Luiz Seixas Iorio',
             email='50.00800-0@maua.br',
-            user_id='1',
+            user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
             ra='55.00800-0',
             role=ROLE.STUDENT,
             confirm_user=True
@@ -18,7 +18,7 @@ class TestCourt:
 
         assert userEntity.name == 'Leonardo Luiz Seixas Iorio'
         assert userEntity.email == '50.00800-0@maua.br'
-        assert userEntity.user_id == '1'
+        assert userEntity.user_id == '93bc6ada-c0d1-7054-26ab-e17414c48ae5'
         assert userEntity.ra == '55.00800-0'
         assert userEntity.role == ROLE.STUDENT
         assert userEntity.confirm_user == True
@@ -28,7 +28,7 @@ class TestCourt:
             User(
                 name=1337,
                 email='50.00800-0@gmail.com',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -38,7 +38,7 @@ class TestCourt:
         with pytest.raises(TypeError):
             User(
                 email='50.00800-0@gmail.com',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -49,7 +49,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.b',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -60,7 +60,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email=1337,
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -70,7 +70,7 @@ class TestCourt:
         with pytest.raises(TypeError):
             User(
                 name='Leonardo Luiz Seixas Iorio',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -87,12 +87,12 @@ class TestCourt:
                 confirm_user=True
             )
 
-    def test_invalid_user_id_wrong_str_type(self):
+    def test_invalid_user_id_not_uuid_str(self):
         with pytest.raises(EntityError):
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.br',
-                user_id='n',
+                user_id='not a uuid',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -113,7 +113,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.br',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.008000',
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -124,7 +124,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.br',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 role=ROLE.STUDENT,
                 confirm_user=True
             )
@@ -134,7 +134,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.br',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra=55008000,
                 role=ROLE.STUDENT,
                 confirm_user=True
@@ -145,7 +145,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.br',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 role='admin',
                 confirm_user=True
@@ -156,7 +156,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.br',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 confirm_user=True
             )
@@ -166,7 +166,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.br',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 role=ROLE.STUDENT,
                 confirm_user='false'
@@ -177,7 +177,7 @@ class TestCourt:
             User(
                 name='Leonardo Luiz Seixas Iorio',
                 email='50.00800-0@maua.br',
-                user_id='1',
+                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
                 ra='55.00800-0',
                 role=ROLE.STUDENT
             )

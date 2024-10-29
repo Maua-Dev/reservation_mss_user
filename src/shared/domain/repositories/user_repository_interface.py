@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from src.shared.domain.entities.user import User
 
@@ -7,30 +7,38 @@ from src.shared.domain.entities.user import User
 class IUserRepository(ABC):
 
     @abstractmethod
-    def get_user(self, user_id: int) -> User:
+    def get_user(self, user_id: str) -> User:
         """
-        If user not found raise NoItemsFound
+        Returns a user by a user_id (uuid)
         """
         pass
 
     @abstractmethod
     def get_all_users(self) -> List[User]:
+        '''
+        Returns all users
+        '''
         pass
 
     @abstractmethod
     def create_user(self, new_user: User) -> User:
+        '''
+        Given a new user, creates it and returns it
+        '''
         pass
 
     @abstractmethod
-    def delete_user(self, user_id: int) -> User:
+    def delete_user(self, user_id: str) -> Optional[User]:
         """
-        If user not found raise NoItemsFound
+        Deletes user by id
         """
         pass
 
     @abstractmethod
-    def update_user(self, user_id: int, new_name: str) -> User:
+    def update_user(self, user_id: str, new_name: Optional[str] = None, new_email: Optional[str] = None,
+                    new_ra: Optional[str] = None) -> Optional[User]:
         """
-        If user not found raise NoItemsFound
+        Updates a user by id,
+        takes new_name, new_email and new_ra as optional parameters
         """
         pass

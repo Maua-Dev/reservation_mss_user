@@ -8,7 +8,7 @@ class TestUserRespositoryMock:
         new_user = User(
             name="FrontFlop",
             email="front.flop@gmail.com",
-            user_id="12345678-1234-1234-1234-123456789abc",
+            user_id="93bc6ada-c0d1-7054-26ab-e17414c48ae5",
             ra="12.34567-8",
             role=ROLE.STUDENT,
             confirm_user=True

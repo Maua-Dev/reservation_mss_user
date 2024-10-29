@@ -1,18 +1,20 @@
 import abc
 import re
+import uuid
 from typing import Optional
 from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.domain.enums.role_enum import ROLE
 
+
 class User(abc.ABC):
     name: str
     email: str
-    user_id : str
+    user_id: str
     ra: Optional[str] = None
-    role : ROLE
-    confirm_user : bool
+    role: ROLE
+    confirm_user: bool
 
-    def __init__(self, name: str, email: str, user_id : str, ra: str, role: ROLE, confirm_user: bool):
+    def __init__(self, name: str, email: str, user_id: str, ra: str, role: ROLE, confirm_user: bool):
         if not User.validate_name(name):
             raise EntityError("name")
         self.name = name
@@ -37,7 +39,6 @@ class User(abc.ABC):
             raise EntityError("confirm_user")
         self.confirm_user = confirm_user
 
-
     @staticmethod
     def validate_name(name: str) -> bool:
         if not isinstance(name, str) or not name:
@@ -54,9 +55,14 @@ class User(abc.ABC):
 
     @staticmethod
     def validate_user_id(user_id: str) -> bool:
-        if not isinstance(user_id, str) or not user_id:
-            return False
-        return True
+        if isinstance(user_id, str):
+            try:
+                uuid_obj = uuid.UUID(user_id)  #versão específica?
+                return True
+            except ValueError:
+                return False
+
+        return False
 
     @staticmethod
     def validate_ra(ra: str) -> bool:
@@ -81,20 +87,13 @@ class User(abc.ABC):
             return False
         return True
 
-
     def to_dict(self):
         return {
-            "user_id":self.user_id,
-            "name":self.name,
-            "email":self.email,
-            "ra":self.ra,
-            "role":self.role.value,
-            "confirm_user":self.confirm_user
+            "user_id": self.user_id,
+            "name": self.name,
+            "email": self.email,
+            "ra": self.ra,
+            "role": self.role.value,
+            "confirm_user": self.confirm_user
 
         }
-
-
-
-
-
-
