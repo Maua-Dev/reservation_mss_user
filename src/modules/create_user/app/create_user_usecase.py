@@ -12,10 +12,10 @@ class CreateUserUseCase:
     def __call__(self,
                  user_id: str,
                  name: str,
-                 ra: str,
                  email: str,
                  role: ROLE,
                  confirm_user: bool) -> User:
+
         if self.repo.get_user(user_id=user_id) is not None:
             raise DuplicatedItem('user_id')
 
