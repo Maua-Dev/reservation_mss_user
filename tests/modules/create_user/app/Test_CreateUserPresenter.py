@@ -24,13 +24,11 @@ class Test_CreateUserPresenter:
                 "apiId": "<urlid>",
                 "authentication": None,
                 "authorizer": {
-                    "claims":
-                        {
-                            "sub": "d61dbf66-a10f-11ed-a8fc-0242ac120002",
-                            "name": "Vitinho Molhas",
-                            "email": "molhas@maua.br",
-                            "custom:isMaua": True
-                        }
+                    "user": json.dumps({
+                            "id": "93bc6ada-c0d1-7054-26ab-e17414c48ae5",
+                            "mail": "52.00847-4@maua.br",
+                            "name": "Jao do Bao",
+                    })
                 },
                 "domainName": "<url-id>.lambda-url.us-west-2.on.aws",
                 "domainPrefix": "<url-id>",
