@@ -1,34 +1,35 @@
-from src.modules.create_user.app.create_user_presenter import usecase
+import json
+
+from src.modules.create_user.app.create_user_viewmodel import CreateUserViewmodel
 from src.shared.environments import Environments
-from src.shared.domain.entities.user import User
-from src.shared.domain.repositories.user_repository_interface import IUserRepository
-from src.shared.domain.enums.role_enum import ROLE
-from src.modules.create_user.app.create_user_usecase import CreateUserUseCase
+from src.modules.create_user.app.create_user_usecase import CreateUserUsecase
 from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.helpers.external_interfaces.external_interface import IResponse, IRequest
-from src.shared.helpers.errors.controller_errors import BaseError, MissingParameters
-from src.shared.helpers.external_interfaces.http_codes import BadRequest, InternalServerError
+from src.shared.helpers.errors.controller_errors import MissingParameters
+from src.shared.helpers.external_interfaces.http_codes import BadRequest, InternalServerError, Created
 
 
 class CreateUserController:
 
-    def __init__(self, usecase: CreateUserUseCase):
+    def __init__(self, usecase: CreateUserUsecase):
         self.CreateUserUseCase = usecase
 
     def __call__(self, request: IRequest) -> IResponse:
 
-        id_from_request = request.data.get("Authorizer").get("user").get("id")
-        user_repo = Environments.get_user_repo()
-
         try:
-            if request.data.get("Authorizer").get("user") is None:
+            user_to_create = json.loads(request.data.get('user_from_authorizer'))
+            if user_to_create is None:
                 raise MissingParameters('user data from authorizer')
 
             user = self.CreateUserUseCase(
-                name=request.data.get("name"),
-                email=request.data.get("mail"),
-                user_id=request.data.get("id"),
+                name=user_to_create['name'],
+                email=user_to_create['mail'],
+                user_id=user_to_create['id'],
             )
+
+            viewmodel = CreateUserViewmodel(user)
+
+            return Created(viewmodel.to_dict())
 
         except MissingParameters as err:
             return BadRequest(body=err.message)
@@ -37,4 +38,5 @@ class CreateUserController:
             return BadRequest(body=err.message)
 
         except Exception as err:
+            print(err)
             return InternalServerError(body=err.args[0])
