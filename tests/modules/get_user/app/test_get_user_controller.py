@@ -8,24 +8,24 @@ class TestGetUserController:
         repo = UserRepositoryMock()
         usecase = GetUserUseCase(repo=repo)
         controller = GetUserController(usecase=usecase)
-        request = HttpRequest(body={
-            "user_id": "93bc6ada-c0d1-7054-26ab-e17414c98ae4",
-            "name": "Leo Iorio",
-            "email": "29.91279-6@maua.br",
-            "ra": "29.91279-6",
-            "role": "STUDENT",
-            "confirm_user": True
+        request = HttpRequest(headers={
+            "user_from_authorizer":
+                {
+                    "id": "93bc6ada-c0d1-7054-26ab-e17414c48ae3",
+                    "name":"Rodas Rodas",
+                    "mail":"rodas@gmail.com"
+                }
         })
 
         response = controller(request)
 
         assert response.status_code == 200
-        assert response.body['user']['user_id'] == "93bc6ada-c0d1-7054-26ab-e17414c98ae4"
-        assert response.body['user']['name'] == "Leo Iorio"
-        assert response.body['user']['email'] == "29.91279-6@maua.br"
-        assert response.body['user']['ra'] == "29.91279-6"
-        assert response.body['user']['role'] == "STUDENT"
+        assert response.body['user']['user_id'] == "93bc6ada-c0d1-7054-26ab-e17414c48ae3"
+        assert response.body['user']['name'] == "Rodas Rodas"
+        assert response.body['user']['mail'] == "rodas@gmail.com"
+        assert response.body['user']['role'] == "ADMIN"
         assert response.body['user']['confirm_user'] == True
+        assert response.body['user']['ra'] == None
 
     def test_get_user_controller_missing_id(self):
         repo = UserRepositoryMock()
