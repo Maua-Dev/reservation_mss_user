@@ -2,6 +2,7 @@ import pytest
 
 from src.modules.create_user.app.create_user_usecase import CreateUserUsecase
 from src.shared.domain.enums.role_enum import ROLE
+from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.helpers.errors.usecase_errors import DuplicatedItem
 from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
 
@@ -46,4 +47,10 @@ class TestCreateUserUsecase:
 
             usecase(name="Vini Berti", email="50.00847-4@maua.br", user_id="93bc6ada-c0d1-8754-26ab-e17414c48ae7")
 
+    def test_create_user_usecase_entity_error(self):
+        repo = UserRepositoryMock()
+        usecase = CreateUserUsecase(repo)
 
+        with pytest.raises(EntityError):
+
+            usecase(name=1 , email="50.00847-4@maua.br", user_id="93bc6ada-c0d1-8754-26ab-e17414c48a77")

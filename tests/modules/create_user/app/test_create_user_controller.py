@@ -55,5 +55,23 @@ class TestCreateUserController:
 
         response = controller(request)
 
-        assert response.status_code == 409
+        assert response.status_code == 400
+
+    def test_create_user_controller_raise_entity_error(self):
+        repo = UserRepositoryMock()
+        usecase = CreateUserUsecase(repo=repo)
+        controller = CreateUserController(usecase=usecase)
+
+        request = HttpRequest(headers={
+            "user_from_authorizer": {
+                "name": 1,
+                "mail": "50.00847-4@maua.br",
+                "id": "93bc6ada-c0d1-8754-26ab-e17414c48ae7"
+            }
+        })
+
+        response = controller(request)
+
+        assert response.status_code == 400
+
 

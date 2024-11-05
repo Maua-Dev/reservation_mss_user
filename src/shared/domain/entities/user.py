@@ -10,7 +10,7 @@ class User(abc.ABC):
     name: str
     email: str
     user_id: str
-    ra: str
+    ra: Optional[str] = None
     role: ROLE
     confirm_user: bool
 

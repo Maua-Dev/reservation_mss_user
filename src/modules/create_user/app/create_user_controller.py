@@ -40,7 +40,10 @@ class CreateUserController:
             return Created(viewmodel.to_dict())
 
         except DuplicatedItem as err:
-            return Conflict(body=err.message)
+            return BadRequest(body=err.message)
+
+        except EntityError as err:
+            return BadRequest(body=err.message)
 
         except Denied as err:
             return NotFound(body=err.message)
