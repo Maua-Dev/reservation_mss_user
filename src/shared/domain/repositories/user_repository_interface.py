@@ -35,7 +35,10 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    def update_user(self, user_id: str, new_name: Optional[str] = None, new_email: Optional[str] = None,
+    def update_user(self,
+                    user_id: str, 
+                    new_name: Optional[str] = None, 
+                    new_email: Optional[str] = None,
                     new_ra: Optional[str] = None) -> Optional[User]:
         """
         Updates a user by id,
