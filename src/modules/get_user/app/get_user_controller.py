@@ -19,12 +19,13 @@ class GetUserController:
                 raise Denied()
 
             if isinstance(request.data.get('user_from_authorizer'), str):
-
                 user_to_get = json.loads(request.data.get('user_from_authorizer'))
 
             else:
-
                 user_to_get = request.data.get('user_from_authorizer')
+
+            if 'id' not in user_to_get:
+                raise MissingParameters('user_id')
 
             user = self.usecase(
                 user_id=user_to_get['id'],
