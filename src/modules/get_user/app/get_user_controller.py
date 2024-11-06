@@ -15,6 +15,8 @@ class GetUserController:
 
     def __call__(self, request: IRequest):
         try:
+            print(request.data.get('user_from_authorizer'))
+
             if request.data.get('user_from_authorizer') is None:
                 raise Denied()
 
@@ -24,11 +26,11 @@ class GetUserController:
             else:
                 user_to_get = request.data.get('user_from_authorizer')
 
-            if 'id' not in user_to_get:
+            if 'user_id' not in user_to_get:
                 raise MissingParameters('user_id')
 
             user = self.usecase(
-                user_id=user_to_get['id'],
+                user_id=user_to_get['user_id'],
             )
 
             viewmodel = GetUserViewModel(user)

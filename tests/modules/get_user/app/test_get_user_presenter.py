@@ -34,6 +34,8 @@ class Test_GetUserPresenter:
                         "user_id": first_user.user_id,
                         "email": first_user.email,
                         "name": first_user.name,
+                        "ra": first_user.ra,
+                        "role": first_user.role,
                     }
                 },
                 "domainName": "<url-id>.lambda-url.us-west-2.on.aws",

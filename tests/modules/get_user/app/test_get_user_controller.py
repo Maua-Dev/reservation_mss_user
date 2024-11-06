@@ -11,7 +11,7 @@ class TestGetUserController:
         request = HttpRequest(headers={
             "user_from_authorizer":
                 {
-                    "id": "93bc6ada-c0d1-7054-26ab-e17414c48ae3",
+                    "user_id": "93bc6ada-c0d1-7054-26ab-e17414c48ae3",
                     "name":"Rodas Rodas",
                     "mail":"rodas@gmail.com"
                 }
@@ -52,7 +52,7 @@ class TestGetUserController:
         request = HttpRequest(headers={
             "user_from_authorizer":
                 {
-                    "id": "93bc6ada-c0d1-7054-26ab-e17414c48ae4",
+                    "user_id": "93bc6ada-c0d1-7054-26ab-e17414c48ae4",
                     "name":"Rodas Rodas",
                     "mail":"rodas@gmail.com"
                 }
