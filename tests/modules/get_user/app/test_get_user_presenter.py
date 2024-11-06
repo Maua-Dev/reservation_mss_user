@@ -6,7 +6,7 @@ from src.modules.get_user.app.get_user_presenter import lambda_handler
 from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
 
 first_user = UserRepositoryMock().users_list[0]
-third_user  = UserRepositoryMock().users_list[2]
+
 
 class Test_GetUserPresenter:
 

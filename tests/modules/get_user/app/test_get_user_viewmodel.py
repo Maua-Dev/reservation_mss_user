@@ -22,3 +22,24 @@ class Test_GetUserViewModel:
         }
 
         assert reponse == expected
+
+        
+    def test_get_user_viewmodel_professor(self):
+        repo = UserRepositoryMock()
+        usecase = GetUserUseCase(repo=repo)
+        user = usecase(repo.users_list[3].user_id)
+        response = GetUserViewModel(user=user).to_dict()
+
+        expected = {
+            "user": {
+                "name": "Giovanna Ehobeckas",
+                "email": "gi@hotmail.com",
+                "user_id": "93bc6ada-c0d1-7054-26ab-e17454c48ae6",
+                "ra": None,
+                "role": "PROFESSOR",
+                "confirm_user": True
+            },
+            "message": "the user was retrieved"
+        }
+
+        assert response == expected

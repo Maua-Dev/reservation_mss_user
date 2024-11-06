@@ -63,3 +63,28 @@ class TestGetUserController:
         assert response.status_code == 404
         assert response.body == "No items found for user_id"
             
+
+
+    def test_get_user_controller_professor(self):
+        repo = UserRepositoryMock()
+        usecase = GetUserUseCase(repo=repo)
+        controller = GetUserController(usecase=usecase)
+        request = HttpRequest(headers={
+            "user_from_authorizer":
+                {
+                   "user_id": "93bc6ada-c0d1-7054-26ab-e17454c48ae6",
+                    "name":"Giovanna Ehobeckas",
+                    "mail":"gi@hotmail.com",
+                }
+        })
+
+        response = controller(request)
+
+        assert response.status_code == 200
+        assert response.body['user']['user_id'] == "93bc6ada-c0d1-7054-26ab-e17454c48ae6"
+        assert response.body['user']['name'] == "Giovanna Ehobeckas"
+        assert response.body['user']['email'] == "gi@hotmail.com"
+        assert response.body['user']['role'] == "PROFESSOR"
+        assert response.body['user']['confirm_user'] == True
+        assert response.body['user']['ra'] == None
+        
