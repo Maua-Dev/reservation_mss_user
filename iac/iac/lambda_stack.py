@@ -72,6 +72,24 @@ class LambdaStack(Construct):
             results_cache_ttl=Duration.minutes(5)
         )
 
+        authorizer_lambda_create_user = lambda_.Function(
+            self, "LambdaAuthorizerReservationMssUser",
+            code = lambda_.Code.from_asset("../src/functions"),
+            handler = "authorizer_create_user.lambda_handler",
+            runtime=lambda_.Runtime.PYTHON_3_9,
+            layers = [self.lambda_layer, self.lambda_power_tools],
+            environment = environment_variables,
+            timeout=Duration.seconds(15)
+        )
+
+        token_authorizer_lambda_create_user = apigw.TokenAuthorizer(
+            self, "TokenAuthorizerCreateUserReservationMssUser",
+            handler=authorizer_lambda_create_user,
+            identity_source=apigw.IdentitySource.header("Authorization"),
+            authorizer_name="LambdaAuthorizerCreateUserReservationMssUser",
+            results_cache_ttl=Duration.minutes(5)
+        )
+
         self.get_user_function = self.create_lambda_api_gateway_integration(
             module_name="get_user",
             method="GET",
@@ -85,7 +103,7 @@ class LambdaStack(Construct):
             method="POST",
             mss_student_api_resource=api_gateway_resource,
             environment_variables=environment_variables,
-            authorizer=token_authorizer_lambda
+            authorizer=token_authorizer_lambda_create_user
         )
 
         self.delete_user_function = self.create_lambda_api_gateway_integration(
