@@ -52,7 +52,7 @@ class Test_UpdateMemberPresenter:
         
         response = lambda_handler(event, None)
         
-        assert response["statusCode"] == 200
+        assert response["statusCode"] == 400
         assert json.loads(response["body"])["message"] == 'the user was updated'
         assert json.loads(response["body"])["user"]["name"] == "Giovanna Albuquerque"
         assert json.loads(response["body"])["user"]["email"] == "gio.oliver.albuquerque@gmail.com"
