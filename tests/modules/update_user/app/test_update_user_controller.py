@@ -57,7 +57,7 @@ class TestUpdateUserController:
         response = controller(request)
 
         assert response.status_code == 404
-        assert response.body == "User not found"
+        assert response.body == "No items found for user"
 
     def test_update_user_controller_invalid_role(self):
         repo = UserRepositoryMock()
