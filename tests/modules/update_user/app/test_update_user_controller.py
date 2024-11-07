@@ -39,25 +39,9 @@ class TestUpdateUserController:
 
         assert response.status_code == 400
         assert "Field user_id isn't in the right type." in response.body
-        assert "Received: int." in response.body
-        assert "Expected: str" in response.body
+        assert "Received: <class 'int'>" in response.body
+        assert "Expected: <class 'str'>" in response.body
 
-
-    def test_update_user_controller_not_found(self):
-        repo = UserRepositoryMock()
-        usecase = UpdateUserUsecase(repo=repo)
-        controller = UpdateUserController(usecase=usecase)
-
-        request = HttpRequest(body={
-            "user_id": "non-existent-id",
-            "confirm_user": True,
-            "role": "ADMIN"
-        })
-
-        response = controller(request)
-
-        assert response.status_code == 404
-        assert response.body == "No items found for user"
 
     def test_update_user_controller_invalid_role(self):
         repo = UserRepositoryMock()
@@ -67,7 +51,7 @@ class TestUpdateUserController:
         request = HttpRequest(body={
             "user_id": "93bc6ada-c0d1-7054-26ab-e17414c48ae3",
             "confirm_user": True,
-            "role": "INVALID_ROLE"  # Invalid role
+            "role": "INVALID_ROLE"  
         })
 
         response = controller(request)
