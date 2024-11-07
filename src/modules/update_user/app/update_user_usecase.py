@@ -8,7 +8,10 @@ class UpdateUserUsecase:
     def __init__(self, repo: IUserRepository):
         self.repo = repo
 
-    def __call__(self, user_id: str, confirm_user: bool, role: ROLE) -> User:
+    def __call__(self, 
+                 user_id: str, 
+                 confirm_user: bool, 
+                 role: ROLE) -> User:
         
         if not User.validate_user_id:
             raise EntityError("user_id")
@@ -25,6 +28,7 @@ class UpdateUserUsecase:
 
         user.confirm_user = confirm_user
         user.role = role
+        
 
         updated_user = self.repo.update_user(user)
 
