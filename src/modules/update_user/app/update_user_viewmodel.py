@@ -21,8 +21,10 @@ class UserViewModel:
         }
 
 class UpdateUserViewModel:
+    user: UserViewModel
+
     def __init__(self, user: User):
-        self.user = UserViewModel(user)
+        self.user = UserViewModel(user=user)
 
     def to_dict(self) -> dict:
         return {
