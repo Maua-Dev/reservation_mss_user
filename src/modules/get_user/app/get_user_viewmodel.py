@@ -2,7 +2,7 @@ from src.shared.domain.entities.user import User
 from src.shared.domain.enums.role_enum import ROLE
 from typing import Optional
 
-class UserViewModel:
+class UserViewmodel:
     name: str
     email: str
     user_id: str
@@ -28,11 +28,11 @@ class UserViewModel:
             "confirm_user": self.confirm_user
         }
     
-class GetUserViewModel(UserViewModel):
-    user_viewmodel: UserViewModel
+class GetUserViewmodel(UserViewmodel):
+    user_viewmodel: UserViewmodel
 
     def __init__(self, user: User):
-        self.user_viewmodel = UserViewModel(user)
+        self.user_viewmodel = UserViewmodel(user)
 
     def to_dict(self):
         return{

@@ -3,7 +3,7 @@ from src.shared.domain.repositories.user_repository_interface import IUserReposi
 from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.helpers.errors.usecase_errors import NoItemsFound
 
-class GetUserUseCase:
+class GetUserUsecase:
     repo: IUserRepository
 
     def __init__(self, repo: IUserRepository):

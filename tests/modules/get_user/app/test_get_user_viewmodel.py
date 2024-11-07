@@ -1,13 +1,13 @@
-from src.modules.get_user.app.get_user_viewmodel import GetUserViewModel
-from src.modules.get_user.app.get_user_usecase import GetUserUseCase
+from src.modules.get_user.app.get_user_viewmodel import GetUserViewmodel
+from src.modules.get_user.app.get_user_usecase import GetUserUsecase
 from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
 
-class Test_GetUserViewModel:
+class Test_GetUserViewmodel:
     def test_get_user_viewmodel(self):
         repo = UserRepositoryMock()
-        usecase = GetUserUseCase(repo=repo)
+        usecase = GetUserUsecase(repo=repo)
         user = usecase(repo.users_list[1].user_id)
-        reponse = GetUserViewModel(user = user).to_dict()
+        reponse = GetUserViewmodel(user = user).to_dict()
 
         expected = {
             "user": {
@@ -26,9 +26,9 @@ class Test_GetUserViewModel:
         
     def test_get_user_viewmodel_professor(self):
         repo = UserRepositoryMock()
-        usecase = GetUserUseCase(repo=repo)
+        usecase = GetUserUsecase(repo=repo)
         user = usecase(repo.users_list[3].user_id)
-        response = GetUserViewModel(user=user).to_dict()
+        response = GetUserViewmodel(user=user).to_dict()
 
         expected = {
             "user": {

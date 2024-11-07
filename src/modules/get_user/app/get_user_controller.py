@@ -1,7 +1,7 @@
 import json
 
-from .get_user_usecase import GetUserUseCase
-from .get_user_viewmodel import GetUserViewModel
+from .get_user_usecase import GetUserUsecase
+from .get_user_viewmodel import GetUserViewmodel
 from src.shared.helpers.errors.controller_errors import MissingParameters, WrongTypeParameter, Denied
 from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.helpers.errors.usecase_errors import NoItemsFound
@@ -10,7 +10,7 @@ from src.shared.helpers.external_interfaces.http_codes import BadRequest, NotFou
 
 
 class GetUserController:
-    def __init__(self, usecase: GetUserUseCase):
+    def __init__(self, usecase: GetUserUsecase):
         self.usecase = usecase
 
     def __call__(self, request: IRequest):
@@ -33,7 +33,7 @@ class GetUserController:
                 user_id=user_to_get['user_id'],
             )
 
-            viewmodel = GetUserViewModel(user)
+            viewmodel = GetUserViewmodel(user)
 
             return OK(viewmodel.to_dict())
         
