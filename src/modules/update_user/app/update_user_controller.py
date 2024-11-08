@@ -25,13 +25,13 @@ class UpdateUserController:
                 raise WrongTypeParameter(fieldName='user_id', fieldTypeExpected=str,
                                          fieldTypeReceived=type(request.data.get('user_id')))
             
-            role_str = request.data.get('role')
+            role_str = request.data.get('new_role')
 
             if role_str:
                 if role_str not in [role_type.value for role_type in ROLE]:
-                    raise EntityError('role')
+                    raise EntityError('new_role')
 
-            confirm_user_bool = request.data.get('confirm_user')
+            confirm_user_bool = request.data.get('new_confirm_user')
 
             if confirm_user_bool is not None:
                 if type(confirm_user_bool) is not bool:
@@ -42,7 +42,7 @@ class UpdateUserController:
 
                 
             user = self.usecase(
-                user_id=request.data.get('user_id'),
+                user_id=request.data.get('user_id') or request.data.get('authorizer', {}).get('claims', {}).get('user_id'),
                 role=ROLE[role_str] if role_str is not None else None,
                 confirm_user=confirm_user_bool
             )

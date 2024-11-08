@@ -31,8 +31,8 @@ class TestUpdateUserController:
 
         request = HttpRequest(body={
             "user_id": 123, 
-            "confirm_user": True,
-            "role": "ADMIN"
+            "new_confirm_user": True,
+            "new_role": "ADMIN"
         })
 
         response = controller(request)
@@ -50,11 +50,11 @@ class TestUpdateUserController:
 
         request = HttpRequest(body={
             "user_id": "93bc6ada-c0d1-7054-26ab-e17414c48ae3",
-            "confirm_user": True,
-            "role": "INVALID_ROLE"  
+            "new_confirm_user": True,
+            "new_role": "INVALID_ROLE"  
         })
 
         response = controller(request)
 
         assert response.status_code == 400
-        assert response.body == "Field role is not valid"
+        assert response.body == "Field new_role is not valid"
