@@ -18,7 +18,6 @@ class UserDynamoDTO:
                  name: str,
                  role: ROLE,
                  confirm_user: bool):
-
         self.user_id = user_id
         self.email = email
         self.ra = ra
@@ -32,12 +31,12 @@ class UserDynamoDTO:
         Parse data from User to UserDynamoDTO
         """
         return UserDynamoDTO(
-            user_id = user.user_id,
-            email = user.email,
-            ra = user.ra,
-            name = user.name,
-            role = user.role,
-            confirm_user = user.confirm_user
+            user_id=user.user_id,
+            email=user.email,
+            ra=user.ra,
+            name=user.name,
+            role=user.role,
+            confirm_user=user.confirm_user
         )
 
     def to_dynamo(self) -> dict:
@@ -54,6 +53,8 @@ class UserDynamoDTO:
             "confirm_user": self.confirm_user
         }
 
+        data = {key: (value if value is not None else 'None') for key, value in data.items()}
+
         return data
 
     @staticmethod
@@ -65,7 +66,7 @@ class UserDynamoDTO:
         return UserDynamoDTO(
             user_id=str(user_data["user_id"]),
             email=str(user_data["email"]),
-            ra=str(user_data["ra"]),
+            ra=str(user_data["ra"] if user_data["ra"] is not None else None),
             name=str(user_data["name"]),
             role=next((role for role in ROLE if role.value == user_data["role"]), ROLE.STUDENT),
             confirm_user=user_data["confirm_user"]

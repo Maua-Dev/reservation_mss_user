@@ -45,7 +45,7 @@ def load_mock_to_local_dynamo():
 
     print('Loading mock to data to dynamo...')
 
-    print("Loading courts")
+    print("Loading users...")
     user_count = 0
     for user in repo_mock.users_list:
         print(f'Loading user {user.name}...')

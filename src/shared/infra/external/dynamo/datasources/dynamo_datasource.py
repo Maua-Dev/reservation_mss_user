@@ -36,7 +36,11 @@ class DynamoDatasource:
         item_parsed = json.loads(json.dumps(item), parse_float=Decimal)
         return item_parsed
 
-    def put_item(self, item: dict, partition_key: str, sort_key: str = None, **kwargs):
+    def put_item(self,
+                 item: dict,
+                 partition_key: str,
+                 sort_key: str = None,
+                 **kwargs):
         """
         Insert a new item into the table or hard update an existing one.
         Ref: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html#DynamoDB.Table.put_item

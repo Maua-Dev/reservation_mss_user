@@ -14,11 +14,15 @@ class UserRepositoryDynamo(IUserRepository, ABC):
     def partition_key_format(self, user_id: str) -> str:
         return f"{user_id}"
 
+    def sort_key_format(self, name: str) -> str:
+        return f"{name}"
+
     def __init__(self):
         self.dynamo = DynamoDatasource(endpoint_url=Environments.get_envs().endpoint_url,
                                        dynamo_table_name=Environments.get_envs().dynamo_table_name,
                                        region=Environments.get_envs().region,
                                        partition_key=Environments.get_envs().dynamo_partition_key,
+                                       sort_key=Environments.get_envs().dynamo_sort_key
                                        )
 
     def get_all_users(self) -> List[User]:
@@ -31,6 +35,7 @@ class UserRepositoryDynamo(IUserRepository, ABC):
 
         resp = self.dynamo.put_item(
             partition_key=self.partition_key_format(new_user.user_id),
+            sort_key=self.sort_key_format(new_user.name),
             item=item,
             is_decimal=True
         )
