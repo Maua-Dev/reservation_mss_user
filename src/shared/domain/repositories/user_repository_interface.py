@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
+from src.shared.domain.enums.role_enum import ROLE
 from src.shared.domain.entities.user import User
 
 
@@ -39,7 +40,9 @@ class IUserRepository(ABC):
                     user_id: str, 
                     new_name: Optional[str] = None, 
                     new_email: Optional[str] = None,
-                    new_ra: Optional[str] = None) -> Optional[User]:
+                    new_ra: Optional[str] = None,
+                    new_role: Optional[ROLE] = None,
+                    new_confirm_user: Optional[bool] = None) -> Optional[User]:
         """
         Updates a user by id,
         takes new_name, new_email and new_ra as optional parameters
