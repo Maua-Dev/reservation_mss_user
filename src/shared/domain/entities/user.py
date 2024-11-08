@@ -97,3 +97,4 @@ class User(abc.ABC):
             "confirm_user": self.confirm_user
 
         }
+
