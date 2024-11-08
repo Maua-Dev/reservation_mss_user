@@ -20,16 +20,14 @@ class UpdateUserUsecase:
         if not user:
             raise NoItemsFound ("user")
  
-        if not User.validate_confirm_user(confirm_user):
-            raise EntityError("confirm_user")
+        if confirm_user:
+            if not User.validate_confirm_user(confirm_user):
+                raise EntityError("new_confirm_user")
+            
+        if role:
+            if not User.validate_role(role):
+                raise EntityError("new_role")
         
-        if not User.validate_role(role):
-            raise EntityError("role")
-
-        user.confirm_user = confirm_user
-        user.role = role
-        
-
-        updated_user = self.repo.update_user(user)
+        updated_user = self.repo.update_user(user_id=user_id, new_role=role, new_confirm_user=confirm_user)
 
         return updated_user
