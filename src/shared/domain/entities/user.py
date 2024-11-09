@@ -14,7 +14,7 @@ class User(abc.ABC):
     role: ROLE
     confirm_user: bool
 
-    def __init__(self, name: str, email: str, user_id: str, ra: str, role: ROLE, confirm_user: bool):
+    def __init__(self, name: str, email: str, user_id: str, role: ROLE, confirm_user: bool, ra: str = None):
         if not User.validate_name(name):
             raise EntityError("name")
         self.name = name

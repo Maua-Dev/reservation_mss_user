@@ -120,14 +120,16 @@ class TestUserEntity:
             )
 
     def test_missing_ra(self):
-        with pytest.raises(TypeError):
-            User(
-                name='Leonardo Luiz Seixas Iorio',
-                email='50.00800-0@maua.br',
-                user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
-                role=ROLE.STUDENT,
-                confirm_user=True
-            )
+
+        test_user = User(
+            name='Leonardo Luiz Seixas Iorio',
+            email='50.00800-0@maua.br',
+            user_id='93bc6ada-c0d1-7054-26ab-e17414c48ae5',
+            role=ROLE.STUDENT,
+            confirm_user=True
+        )
+
+        assert test_user.ra is None
 
     def test_invalid_ra_type(self):
         with pytest.raises(EntityError):
