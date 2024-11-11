@@ -6,7 +6,7 @@ from src.shared.domain.enums.role_enum import ROLE
 class UserDynamoDTO:
     user_id: str
     email: str
-    ra: str
+    ra: Optional[str]
     name: str
     role: ROLE
     confirm_user = bool
@@ -14,7 +14,7 @@ class UserDynamoDTO:
     def __init__(self,
                  user_id: str,
                  email: str,
-                 ra: str,
+                 ra: Optional[str],
                  name: str,
                  role: ROLE,
                  confirm_user: bool):
@@ -48,7 +48,7 @@ class UserDynamoDTO:
             "user_id": self.user_id,
             "email": self.email,
             "ra": self.ra,
-            "name": self.user_id,
+            "name": self.name,
             "role": self.role.value,
             "confirm_user": self.confirm_user
         }
@@ -66,7 +66,7 @@ class UserDynamoDTO:
         return UserDynamoDTO(
             user_id=str(user_data["user_id"]),
             email=str(user_data["email"]),
-            ra=str(user_data["ra"] if user_data["ra"] is not None else None),
+            ra=user_data["ra"] if user_data["ra"] is not 'None' else None,
             name=str(user_data["name"]),
             role=next((role for role in ROLE if role.value == user_data["role"]), ROLE.STUDENT),
             confirm_user=user_data["confirm_user"]

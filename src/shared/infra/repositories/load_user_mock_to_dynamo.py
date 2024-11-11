@@ -51,7 +51,7 @@ def load_mock_to_local_dynamo():
         print(f'Loading user {user.name}...')
         repo_dynamo.create_user(new_user=user)
         user_count += 1
-    print(f'{user_count} courts loaded\n')
+    print(f'{user_count} users loaded\n')
 
     print("Done!")
 
@@ -67,7 +67,7 @@ def load_mock_to_real_dynamo():
         print(f'Loading user {user.name}...')
         repo_dynamo.create_user(new_user=user)
         user_count += 1
-    print(f'{user_count} courts loaded\n')
+    print(f'{user_count} users loaded\n')
 
     print("Done!")
 
