@@ -19,7 +19,7 @@ class DeleteUserController:
             if request.data.get('user_id') is None:
                 raise MissingParameters('user_id')
             
-            user = self.usecase(number=request.data.get('user_id'))
+            user = self.usecase(user_id=request.data.get('user_id'))
             viewmodel = DeleteUserViewmodel(user)
             
             return OK(viewmodel.to_dict())
