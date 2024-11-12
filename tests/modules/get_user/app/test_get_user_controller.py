@@ -88,3 +88,16 @@ class TestGetUserController:
         assert response.body['user']['confirm_user'] == True
         assert response.body['user']['ra'] == None
         
+
+    def test_get_user_controller_denied(self):
+        repo = UserRepositoryMock()
+        usecase = GetUserUsecase(repo=repo)
+        controller = GetUserController(usecase=usecase)
+        request = HttpRequest(headers={
+            "user_from_authorizer": "93bc6ada-c0d1-7054-26ab-e17414c48ae3"  
+        })
+
+        response = controller(request)
+
+        assert response.status_code == 400
+        assert response.body == "Authorizer denied token, user was not returned from it"
