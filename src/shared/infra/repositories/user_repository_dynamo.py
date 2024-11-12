@@ -26,7 +26,14 @@ class UserRepositoryDynamo(IUserRepository, ABC):
                                        )
 
     def get_all_users(self) -> List[User]:
-        pass
+
+        all_users = []
+        all_items = self.dynamo.get_all_items().get('Items')
+
+        for item in all_items:
+            all_users.append(UserDynamoDTO.from_dynamo(item).to_entity())
+
+        return all_users
 
     def create_user(self, new_user: User) -> User:
 
@@ -53,11 +60,11 @@ class UserRepositoryDynamo(IUserRepository, ABC):
         return user
 
     def update_user(self,
-                          user_id: str,
-                          new_confirm_user: Optional[bool] = False,                         #Default pra False
-                          new_role: Optional[ROLE] = ROLE.STUDENT) -> Optional[User]:       #Default pra student
+                    user_id: str,
+                    new_confirm_user: Optional[bool] = False,  #Default pra False
+                    new_role: Optional[ROLE] = ROLE.STUDENT) -> Optional[User]:  #Default pra student
 
-        user_to_update = self.get_user_by_id(user_id=user_id)
+        user_to_update = self.get_user(user_id=user_id)
 
         if user_to_update is None:
             return None

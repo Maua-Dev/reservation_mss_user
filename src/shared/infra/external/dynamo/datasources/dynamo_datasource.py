@@ -66,8 +66,11 @@ class DynamoDatasource:
         @return: dict with the response from DynamoDB
         """
 
+        key = {self.partition_key: partition_key, self.sort_key: sort_key if sort_key else None}
+        key_without_none_values = {k: v for k, v in key.items() if v is not None}
+
         resp = self.dynamo_table.get_item(
-            Key={self.partition_key: partition_key, self.sort_key: sort_key if sort_key else None}
+            Key=key_without_none_values
         )
         return resp
 

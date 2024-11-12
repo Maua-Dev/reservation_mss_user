@@ -63,14 +63,16 @@ class UserDynamoDTO:
         Parse data from DynamoDB to UserDynamoDTO
         @param user_data: dict from DynamoDB
         """
-        return UserDynamoDTO(
+        user = UserDynamoDTO(
             user_id=str(user_data["user_id"]),
             email=str(user_data["email"]),
-            ra=user_data["ra"] if user_data["ra"] is not 'None' else None,
+            ra=user_data["ra"] if user_data["ra"] != 'None' else None,
             name=str(user_data["name"]),
             role=next((role for role in ROLE if role.value == user_data["role"]), ROLE.STUDENT),
             confirm_user=user_data["confirm_user"]
         )
+
+        return user
 
     def to_entity(self) -> User:
         """
