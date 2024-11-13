@@ -1,12 +1,14 @@
+import pytest
+
 from src.shared.domain.entities.user import User
 from src.shared.domain.enums.role_enum import ROLE
-from src.shared.infra.dto.user_dynamo_dto import UserDynamoDTO
 from src.shared.infra.repositories.user_repository_dynamo import UserRepositoryDynamo
 from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
 
 
 class TestUserRepositoryDynamo:
 
+    @pytest.mark.skip("Can't run test in github actions")
     def test_dynamo_get_all_members(self):
 
         repo = UserRepositoryDynamo()
@@ -21,6 +23,7 @@ class TestUserRepositoryDynamo:
         for m_user, d_user in zip(sorted_mock_users, sorted_dynamo_users):
             assert m_user.__dict__ == d_user.__dict__
 
+    @pytest.mark.skip("Can't run test in github actions")
     def test_dynamo_create_user(self):
 
         repo = UserRepositoryDynamo()
@@ -38,6 +41,7 @@ class TestUserRepositoryDynamo:
 
         assert new_user == user
 
+    @pytest.mark.skip("Can't run test in github actions")
     def test_dynamo_get_user(self):
 
         repo = UserRepositoryDynamo()
@@ -48,6 +52,7 @@ class TestUserRepositoryDynamo:
 
         assert user_from_mock.__dict__ == user_from_dynamo.__dict__
 
+    @pytest.mark.skip("Can't run test in github actions")
     def test_dynamo_delete_user(self):
 
         repo = UserRepositoryDynamo()
@@ -59,6 +64,7 @@ class TestUserRepositoryDynamo:
 
         assert user_from_dynamo.__dict__ == deleted_user.__dict__
 
+    @pytest.mark.skip("Can't run test in github actions")
     def test_dynamo_update_user(self):
 
         repo = UserRepositoryDynamo()
