@@ -30,10 +30,31 @@ def setup_dynamo_table():
                 {
                     'AttributeName': 'SK',
                     'AttributeType': 'S'
+                },
+                {
+                    'AttributeName': 'email',
+                    'AttributeType': 'S'
+                }
+            ],
+            LocalSecondaryIndexes=[
+                {
+                    'IndexName': 'LSI1',
+                    'KeySchema': [
+                        {
+                            'AttributeName': 'PK',
+                            'KeyType': 'HASH'
+                        },
+                        {
+                            'AttributeName': 'email',
+                            'KeyType': 'RANGE'
+                        }
+                    ],
+                    'Projection': {
+                        'ProjectionType': 'ALL'  # Include all attributes in the index
+                    }
                 }
             ],
             BillingMode='PAY_PER_REQUEST',
-
         )
         print('Table "reservation_mss_user_table" created!\n')
     else:

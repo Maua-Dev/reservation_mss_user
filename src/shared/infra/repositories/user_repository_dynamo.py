@@ -11,11 +11,13 @@ from src.shared.infra.external.dynamo.datasources.dynamo_datasource import Dynam
 
 class UserRepositoryDynamo(IUserRepository, ABC):
 
-    def partition_key_format(self, user_id: str) -> str:
-        return f"{user_id}"
+    @staticmethod
+    def partition_key_format():
+        return "user"
 
-    def sort_key_format(self, name: str) -> str:
-        return f"{name}"
+    @staticmethod
+    def sort_key_format(user_id: str) -> str:
+        return f"{user_id}"
 
     def __init__(self):
         self.dynamo = DynamoDatasource(endpoint_url=Environments.get_envs().endpoint_url,
@@ -41,8 +43,8 @@ class UserRepositoryDynamo(IUserRepository, ABC):
         item = user_dto.to_dynamo()
 
         resp = self.dynamo.put_item(
-            partition_key=self.partition_key_format(new_user.user_id),
-            sort_key=self.sort_key_format(new_user.name),
+            partition_key=self.partition_key_format(),
+            sort_key=self.sort_key_format(user_id=new_user.user_id),
             item=item,
             is_decimal=True
         )
@@ -50,7 +52,10 @@ class UserRepositoryDynamo(IUserRepository, ABC):
         return new_user
 
     def get_user(self, user_id: str) -> Optional[User]:
-        user_data = self.dynamo.get_item(partition_key=self.partition_key_format(user_id=user_id))
+        user_data = self.dynamo.get_item(
+            partition_key=self.partition_key_format(),
+            sort_key=self.sort_key_format(user_id=user_id)
+        )
 
         if 'Item' not in user_data:
             return None
@@ -61,18 +66,22 @@ class UserRepositoryDynamo(IUserRepository, ABC):
 
     def update_user(self,
                     user_id: str,
-                    new_confirm_user: Optional[bool] = False,  #Default pra False
-                    new_role: Optional[ROLE] = ROLE.STUDENT) -> Optional[User]:  #Default pra student
+                    new_confirm_user: Optional[bool] = None,  #Default pra False
+                    new_role: Optional[ROLE] = None) -> Optional[User]:  #Default pra student
 
         user_to_update = self.get_user(user_id=user_id)
 
         if user_to_update is None:
             return None
 
+        new_confirm_user = user_to_update.confirm_user if new_confirm_user is None else new_confirm_user
+
+        new_role = user_to_update.role if new_role is None else new_role
+
         response = self.dynamo.update_item(
-            partition_key=self.partition_key_format(user_id=user_id),
-            sort_key=None,
-            update_dict={"confirm_user": new_confirm_user, "new_role": new_role.value})
+            partition_key=self.partition_key_format(),
+            sort_key=self.sort_key_format(user_id=user_id),
+            update_dict={"confirm_user": new_confirm_user, "role": new_role.value})
 
         if "Attributes" not in response:
             return None
@@ -80,7 +89,10 @@ class UserRepositoryDynamo(IUserRepository, ABC):
         return UserDynamoDTO.from_dynamo(response["Attributes"]).to_entity()
 
     def delete_user(self, user_id: str) -> Optional[User]:
-        deleted_user = self.dynamo.delete_item(partition_key=self.partition_key_format(user_id=user_id))
+        deleted_user = self.dynamo.delete_item(
+            partition_key=self.partition_key_format(),
+            sort_key=self.sort_key_format(user_id=user_id)
+        )
 
         if 'Attributes' not in deleted_user:
             return None
