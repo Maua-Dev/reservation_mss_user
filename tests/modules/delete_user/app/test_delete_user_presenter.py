@@ -1,7 +1,6 @@
 import json
 
 from src.modules.delete_user.app.delete_user_presenter import lambda_handler
-from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
 
 
 class Test_DeleteUserPresenter:
@@ -21,7 +20,7 @@ class Test_DeleteUserPresenter:
                 "header2": "value1,value2"
             },
             "queryStringParameters": {
-                "parameter1": "93bc6ada-c0d1-7054-26ab-e17414c98ae4"
+                "parameter1": "1"
             },
             "requestContext": {
                 "accountId": "123456789012",
@@ -53,7 +52,7 @@ class Test_DeleteUserPresenter:
         response = lambda_handler(event, None)
         assert response["statusCode"] == 200
 
-    def test_delete_user_deny_from_authorizer(self):
+    def test_delete_user_wrong_type(self):
         event = {
             "version": "2.0",
             "routeKey": "$default",
@@ -66,6 +65,9 @@ class Test_DeleteUserPresenter:
             "headers": {
                 "header1": "value1",
                 "header2": "value1,value2"
+            },
+            "queryStringParameters": {
+                "parameter1": "1"
             },
             "requestContext": {
                 "accountId": "123456789012",
@@ -88,12 +90,12 @@ class Test_DeleteUserPresenter:
                 "time": "12/Mar/2020:19:03:58 +0000",
                 "timeEpoch": 1583348638390
             },
-            "body": "Hello from client!",
+            "body": '{"user_id": "wrong_type"}',
             "pathParameters": None,
             "isBase64Encoded": None,
             "stageVariables": None
         }
-
+    
         response = lambda_handler(event, None)
 
-        assert response['statusCode'] == 404
+        assert response['statusCode'] == 400
