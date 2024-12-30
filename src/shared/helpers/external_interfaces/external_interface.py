@@ -10,6 +10,10 @@ class IRequest(ABC):
 
 class IResponse(ABC):
 
+    def __init__(self):
+        self.headers = None
+        self.body = None
+
     @property
     @abstractmethod
     def status_code(self) -> int:
