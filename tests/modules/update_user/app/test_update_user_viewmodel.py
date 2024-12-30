@@ -18,7 +18,7 @@ class TestUpdateUserViewModel:
                 'role': user.role.value,
                 'confirm_user': user.confirm_user,
             },
-            'message': 'User information was updated successfully.'
+            'message': 'the user was updated'
         }
 
         assert viewmodel.to_dict() == expected
