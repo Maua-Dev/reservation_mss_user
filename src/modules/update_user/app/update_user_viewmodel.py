@@ -29,5 +29,5 @@ class UpdateUserViewModel:
     def to_dict(self) -> dict:
         return {
             'updated_user': self.user.to_dict(),
-            'message': 'User information was updated successfully.'
+            'message': 'the user was updated'
         }
