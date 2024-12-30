@@ -22,37 +22,3 @@ class EntityParameterError(EntityError):
     @property
     def message(self):
         return self.__message
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
