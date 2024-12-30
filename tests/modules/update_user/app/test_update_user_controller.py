@@ -58,3 +58,25 @@ class TestUpdateUserController:
 
         assert response.status_code == 400
         assert response.body == "Field new_role is not valid"
+
+    def test_update_user_controller_success(self):
+        repo = UserRepositoryMock()
+        usecase = UpdateUserUsecase(repo=repo)
+        controller = UpdateUserController(usecase=usecase)
+
+        user_id = "93bc6ada-c0d1-7054-26ab-e17414c48ae3"
+        
+        request = HttpRequest(body={
+            "user_id": user_id,
+            "new_confirm_user": True,
+            "new_role": "PROFESSOR"
+        })
+        
+        response = controller(request)
+        
+        assert response.status_code == 200
+        assert "user_id" in response.body["updated_user"]
+        assert response.body["updated_user"]["user_id"] == user_id
+        assert response.body["updated_user"]["role"] == "PROFESSOR"
+        assert response.body["updated_user"]["confirm_user"] == True
+
