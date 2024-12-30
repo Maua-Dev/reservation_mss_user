@@ -46,6 +46,9 @@ class TestUpdateUserUsecase:
         with pytest.raises(EntityError, match='Field new_role is not valid'):
             usecase(user_id="93bc6ada-c0d1-8754-26ab-e17414c48ae7", confirm_user=True, role="INVALID_ROLE")
 
+    def test_update_user_invalid_user_id(self):
+        repo = UserRepositoryMock()
+        usecase = UpdateUserUsecase(repo=repo)
 
-
-    
+        with pytest.raises(EntityError, match='Field user_id is not valid'):
+            usecase(user_id="invalid-user-id", confirm_user=True, role=ROLE.STUDENT)
