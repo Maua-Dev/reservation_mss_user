@@ -64,4 +64,4 @@ class UpdateUserController:
         
         except Exception as err:
             return InternalServerError(body=err.args[0])
-
+        
