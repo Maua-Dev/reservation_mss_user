@@ -57,7 +57,7 @@ class Test_UpdateMemberPresenter:
         
         assert response["statusCode"] == 200
         assert json.loads(response["body"])
-        assert json.loads(response["body"])["message"] == "User information was updated successfully."
+        assert json.loads(response["body"])["message"] == "the user was updated"
         assert json.loads(response["body"])["updated_user"]["user_id"] == "93bc6ada-c0d1-7054-26ab-e17414c48ae3"
         assert json.loads(response["body"])["updated_user"]["role"] == "STUDENT"
         assert json.loads(response["body"])["updated_user"]["confirm_user"] == True
