@@ -15,13 +15,6 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_all_users(self) -> List[User]:
-        '''
-        Returns all users
-        '''
-        pass
-
-    @abstractmethod
     def create_user(self, new_user: User) -> User:
         '''
         Given a new user, creates it and returns it
