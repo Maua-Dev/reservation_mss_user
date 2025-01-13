@@ -29,7 +29,7 @@ class TestUserRepositoryDynamo:
         repo = UserRepositoryDynamo()
 
         user = User(
-            user_id="93bc6adb-c0d1-7054-26ab-e17454c477e9",
+            user_id="73bc6adb-c0d1-7054-26ab-e17454c477e9",
             email="23.00847-4@maua.br",
             ra="23.00847-4",
             name="Memphis Depay",
@@ -78,4 +78,17 @@ class TestUserRepositoryDynamo:
 
         assert updated_user.confirm_user is True
         assert updated_user.role == prev_user.role
+
+    @pytest.mark.skip("Can't run test in github actions")
+    def test_dynamo_get_user_by_email(self):
+
+        repo = UserRepositoryDynamo()
+        mock_repo = UserRepositoryMock()
+
+        user_from_mock = mock_repo.users_list[0]
+        user_email = user_from_mock.email
+
+        user_from_dynamo = repo.get_user_by_email(email=user_email)
+
+        assert user_from_mock.__dict__ == user_from_dynamo.__dict__
 
