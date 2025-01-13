@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
+from boto3.dynamodb.conditions import Key
+
 from src.shared.domain.entities.user import User
 from src.shared.domain.enums.role_enum import ROLE
 from src.shared.domain.repositories.user_repository_interface import IUserRepository
@@ -27,16 +29,6 @@ class UserRepositoryDynamo(IUserRepository, ABC):
                                        sort_key=Environments.get_envs().dynamo_sort_key
                                        )
 
-    def get_all_users(self) -> List[User]:
-
-        all_users = []
-        all_items = self.dynamo.get_all_items().get('Items')
-
-        for item in all_items:
-            all_users.append(UserDynamoDTO.from_dynamo(item).to_entity())
-
-        return all_users
-
     def create_user(self, new_user: User) -> User:
 
         user_dto = UserDynamoDTO.from_entity(user=new_user)
@@ -50,6 +42,20 @@ class UserRepositoryDynamo(IUserRepository, ABC):
         )
 
         return new_user
+
+    def get_user_by_email(self, email: str):
+
+        user_data = self.dynamo.query(
+            key_condition_expression=Key('PK').eq(self.partition_key_format()) & Key('email').eq(email),
+            IndexName='LSI1'
+        )
+
+        if 'Items' not in user_data:
+            return None
+
+        user = UserDynamoDTO.from_dynamo(user_data.get("Items")[0]).to_entity()
+
+        return user
 
     def get_user(self, user_id: str) -> Optional[User]:
         user_data = self.dynamo.get_item(
