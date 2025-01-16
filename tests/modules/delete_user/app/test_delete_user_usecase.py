@@ -25,11 +25,9 @@ class Test_DeleteUserUsecase:
         with pytest.raises(EntityError):
             user = usecase(user_id=3)
 
-    def test_delete_user_not_found(self):
+    def test_delete_user_no_user(self):
         repo = UserRepositoryMock()
         usecase = DeleteUserUsecase(repo=repo)
 
-        user_id = "93bc6ada-c0d1-7054-26ab-e17414c"
-        
-        with pytest.raises(EntityError):
-            usecase(user_id=user_id)
+        with pytest.raises(NoItemsFound):
+            user = usecase(user_id="93bc6ada-c0d1-7054-26ab-e17414c48ae6")
