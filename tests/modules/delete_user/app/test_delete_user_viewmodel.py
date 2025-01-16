@@ -3,7 +3,7 @@ from src.shared.domain.entities.user import User
 from src.shared.domain.enums.role_enum import ROLE
 
 
-class TestCreateUserViewmodel:
+class TestDeleteUserViewmodel:
 
     def test_delete_user_viewmodel_professor(self):
         user = User(
