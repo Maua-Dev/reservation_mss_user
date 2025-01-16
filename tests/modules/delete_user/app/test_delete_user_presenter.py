@@ -51,6 +51,7 @@ class Test_DeleteUserPresenter:
         
         response = lambda_handler(event, None)
         assert response["statusCode"] == 200
+        assert "the user was deleted successfully" in json.loads(response["body"])["message"]
 
     def test_delete_user_wrong_type(self):
         event = {
