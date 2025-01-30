@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from src.shared.domain.entities.user import User
+from src.shared.domain.enums.role_enum import ROLE
 
 
 class IUserRepository(ABC):
@@ -11,13 +12,6 @@ class IUserRepository(ABC):
         """
         Returns a user by a user_id (uuid)
         """
-        pass
-
-    @abstractmethod
-    def get_all_users(self) -> List[User]:
-        '''
-        Returns all users
-        '''
         pass
 
     @abstractmethod
@@ -35,10 +29,9 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    def update_user(self, user_id: str, new_name: Optional[str] = None, new_email: Optional[str] = None,
-                    new_ra: Optional[str] = None) -> Optional[User]:
+    def update_user(self, user_id: str, new_confirm_user: Optional[bool] = False, new_role: Optional[ROLE] = ROLE.STUDENT) -> Optional[User]:
         """
         Updates a user by id,
-        takes new_name, new_email and new_ra as optional parameters
+        takes new_confirm_user and new_role as optional parameters
         """
         pass
