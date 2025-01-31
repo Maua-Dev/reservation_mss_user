@@ -1,5 +1,3 @@
-from typing import Any
-import json
 from .update_user_usecase import UpdateUserUsecase
 from .update_user_viewmodel import UpdateUserViewModel
 from src.shared.helpers.errors.controller_errors import MissingParameters, WrongTypeParameter
@@ -8,7 +6,6 @@ from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.helpers.external_interfaces.external_interface import IRequest
 from src.shared.helpers.external_interfaces.http_codes import BadRequest, OK, InternalServerError, NotFound
 from src.shared.domain.enums.role_enum import ROLE
-from src.shared.helpers.errors.domain_errors import EntityParameterError
 
 class UpdateUserController:
 
@@ -51,7 +48,7 @@ class UpdateUserController:
             return OK(viewmodel.to_dict())
         
         except NoItemsFound as err:
-            return NoItemsFound(body=err.message)
+            return NotFound(body=err.message)
         
         except MissingParameters as err:
             return BadRequest(body=err.message)
