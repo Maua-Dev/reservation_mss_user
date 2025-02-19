@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
+from src.shared.domain.enums.role_enum import ROLE
 from src.shared.domain.entities.user import User
 from src.shared.domain.enums.role_enum import ROLE
 

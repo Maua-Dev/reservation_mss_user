@@ -35,7 +35,7 @@ class User(abc.ABC):
             raise EntityError("role")
         self.role = role
 
-        if not User.validade_confirm_user(confirm_user):
+        if not User.validate_confirm_user(confirm_user):
             raise EntityError("confirm_user")
         self.confirm_user = confirm_user
 
@@ -82,7 +82,7 @@ class User(abc.ABC):
         return True
 
     @staticmethod
-    def validade_confirm_user(confirm_user: bool) -> bool:
+    def validate_confirm_user(confirm_user: bool) -> bool:
         if not isinstance(confirm_user, bool):
             return False
         return True
@@ -97,3 +97,4 @@ class User(abc.ABC):
             "confirm_user": self.confirm_user
 
         }
+
