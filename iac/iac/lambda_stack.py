@@ -73,7 +73,7 @@ class LambdaStack(Construct):
         )
 
         authorizer_lambda_create_user = lambda_.Function(
-            self, "LambdaAuthorizerReservationMssUser",
+            self, "LambdaAuthorizerCreateUserReservationMssUser",
             code = lambda_.Code.from_asset("../src/functions"),
             handler = "authorizer_create_user.lambda_handler",
             runtime=lambda_.Runtime.PYTHON_3_9,
