@@ -19,17 +19,16 @@ app = cdk.App()
 
 aws_region = os.environ.get("AWS_REGION")
 aws_account_id = os.environ.get("AWS_ACCOUNT_ID")
-stack_name = os.environ.get("STACK_NAME")
+stack_name = os.environ.get("STAGE")
+github_ref = os.environ.get("GITHUB_REF_NAME")
 
-if 'prod' in stack_name:
+stage = ''
+if 'prod' in github_ref:
     stage = 'PROD'
-
-elif 'homolog' in stack_name:
+elif 'homolog' in github_ref:
     stage = 'HOMOLOG'
-
-elif 'dev' in stack_name:
+elif 'dev' in github_ref:
     stage = 'DEV'
-
 else:
     stage = 'TEST'
 
