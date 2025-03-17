@@ -17,7 +17,7 @@ class ReservationMssUserStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        self.region = os.environ.get("REGION")
+        self.aws_region = os.environ.get("AWS_REGION")
 
         self.github_ref = os.environ.get('GITHUB_REF_NAME')
         stage = ''
@@ -54,7 +54,7 @@ class ReservationMssUserStack(Stack):
             "DYNAMO_TABLE_NAME": self.dynamo_table.table.table_name,
             "DYNAMO_PARTITION_KEY": "PK",
             "DYNAMO_SORT_KEY": "SK",
-            "REGION": self.region,
+            "REGION": self.aws_region,
         }
 
 
