@@ -47,7 +47,7 @@ class LambdaStack(Construct):
         super().__init__(scope, "ReservationMssUser")
 
         self.lambda_layer = lambda_.LayerVersion(self, "ReservationMssUser_Layer",
-                                                 code=lambda_.Code.from_asset("./lambda_layer_ReservationMssUser"),
+                                                 code=lambda_.Code.from_asset("iac/lambda_layer_ReservationMssUser"),
                                                  compatible_runtimes=[lambda_.Runtime.PYTHON_3_9]
                                                  )
 
