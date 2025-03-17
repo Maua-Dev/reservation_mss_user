@@ -17,6 +17,8 @@ class ReservationMssUserStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        self.region = os.environ.get('AWS_REGION')
+
         self.github_ref = os.environ.get('GITHUB_REF_NAME')
         stage = ''
         if 'prod' in self.github_ref:
