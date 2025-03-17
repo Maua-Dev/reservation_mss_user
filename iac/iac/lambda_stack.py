@@ -51,10 +51,9 @@ class LambdaStack(Construct):
                                                  compatible_runtimes=[lambda_.Runtime.PYTHON_3_9]
                                                  )
 
-        #vai ter que arrumar isso quando for jogar pra prod ou homolog!
+        self.lambda_region = environment_variables.get("REGION", 'sa-east-1')
         self.lambda_power_tools = lambda_.LayerVersion.from_layer_version_arn(self, "Lambda_Power_Tools",
-                                                                              layer_version_arn="arn:aws:lambda:sa-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2:22")
-        #vai ter que arrumar isso quando for jogar pra prod ou homolog!
+                                                                              layer_version_arn=f"arn:aws:lambda:{self.lambda_region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:22")
 
         authorizer_lambda = lambda_.Function(
             self, "LambdaAuthorizerReservationMssUser",
