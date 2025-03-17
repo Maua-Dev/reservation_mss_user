@@ -17,6 +17,15 @@ class ReservationMssUserStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        self.github_ref = os.environ.get('GITHUB_REF_NAME')
+        stage = ''
+        if 'prod' in self.github_ref:
+            stage = 'PROD'
+        elif 'homology' in self.github_ref:
+            stage = 'HOMOLOG'
+        else:
+            stage = 'DEV'
+
         self.rest_api = RestApi(self, "ReservationMssUser_RestApi",
                                     rest_api_name="ReservationMssUser_RestApi",
                                     description="This is the ReservationMssUser RestApi",
@@ -39,7 +48,7 @@ class ReservationMssUserStack(Stack):
         self.dynamo_table = ReservationMssUserDynamoTable(self, "ReservationMssUserDynamoTable")
 
         ENVIRONMENT_VARIABLES = {
-            "STAGE": os.environ.get("STAGE"),
+            "STAGE": stage,
             "DYNAMO_TABLE_NAME": self.dynamo_table.table.table_name,
             "DYNAMO_PARTITION_KEY": "PK",
             "DYNAMO_SORT_KEY": "SK",
