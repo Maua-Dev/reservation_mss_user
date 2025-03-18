@@ -46,7 +46,7 @@ def lambda_handler(event, context):
 
         # Checking if the user is from Maua
         email_regex = r"[\w\.-]+@maua\.br"  # Regex to match the Maua email
-        if not re.match(email_regex, user_data.get("mail", "")):
+        if not re.match(email_regex, user_data.get("upn", "")):
             return generate_policy("user", "Deny", methodArn)
 
         return generate_policy(
