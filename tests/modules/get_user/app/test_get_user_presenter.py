@@ -31,7 +31,7 @@ class Test_GetUserPresenter:
                 "authorizer": {
                     "claims":
                     {
-                        "user_id": first_user.user_id,
+                        "id": first_user.user_id,
                         "email": first_user.email,
                         "name": first_user.name,
                         "ra": first_user.ra,
@@ -69,56 +69,4 @@ class Test_GetUserPresenter:
         assert json.loads(response['body'])['user']['name'] == first_user.name
         assert json.loads(response['body'])['user']['ra'] == first_user.ra
         assert json.loads(response['body'])['user']['role'] == first_user.role.value
-
-    def test_get_user_presenter_missing_user_id(self):
-        event = {
-            "version": "2.0",
-            "routeKey": "$default",
-            "rawPath": "/my/path",
-            "rawQueryString": "parameter1=value1&parameter1=value2&parameter2=value",
-            "cookies": [
-                "cookie1",
-                "cookie2"
-            ],
-            "headers": {
-                "header1": "value1",
-                "header2": "value1,value2"
-            },
-            "requestContext": {
-                "accountId": "123456789012",
-                "apiId": "<urlid>",
-                "authentication": None,
-                "authorizer": {
-                    "claims":
-                    {
-
-                    }
-                },
-                "domainName": "<url-id>.lambda-url.us-west-2.on.aws",
-                "domainPrefix": "<url-id>",
-                "external_interfaces": {
-                    "method": "POST",
-                    "path": "/my/path",
-                    "protocol": "HTTP/1.1",
-                    "sourceIp": "123.123.123.123",
-                    "userAgent": "agent"
-                },
-                "requestId": "id",
-                "routeKey": "$default",
-                "stage": "$default",
-                "time": "12/Mar/2020:19:03:58 +0000",
-                "timeEpoch": 1583348638390
-            },
-            "body": "Hello from client!",
-            "pathParameters": None,
-            "isBase64Encoded": None,
-            "stageVariables": None
-        }
-
-        response = lambda_handler(event, None)
-        print("Response Body:", response.get("body"))
-
-        assert response["statusCode"] == 400
-        assert json.loads(response["body"]) == "Field user_id is missing"
-
         

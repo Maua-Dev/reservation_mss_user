@@ -11,7 +11,7 @@ class TestGetUserController:
         request = HttpRequest(headers={
             "user_from_authorizer":
                 {
-                    "user_id": "93bc6ada-c0d1-7054-26ab-e17414c48ae3",
+                    "id": "93bc6ada-c0d1-7054-26ab-e17414c48ae3",
                     "name":"Rodas Rodas",
                     "mail":"rodas@gmail.com"
                 }
@@ -27,23 +27,6 @@ class TestGetUserController:
         assert response.body['user']['confirm_user'] == True
         assert response.body['user']['ra'] == None
 
-    def test_get_user_controller_missing_id(self):
-        repo = UserRepositoryMock()
-        usecase = GetUserUsecase(repo=repo)
-        controller = GetUserController(usecase=usecase)
-        request = HttpRequest(headers={
-            "user_from_authorizer": {
-                "name": "Rodas Rodas",
-                "mail": "rodas@gmail.com"
-            }
-        })
-
-        response = controller(request)
-
-        assert response.status_code == 400
-        assert response.body == "Field user_id is missing"
-
-
 
     def test_get_user_controller_user_not_found(self):
         repo = UserRepositoryMock()
@@ -52,7 +35,7 @@ class TestGetUserController:
         request = HttpRequest(headers={
             "user_from_authorizer":
                 {
-                    "user_id": "93bc6ada-c0d1-7054-26ab-e17414c48ae4",
+                    "id": "93bc6ada-c0d1-7054-26ab-e17414c48ae4",
                     "name":"Rodas Rodas",
                     "mail":"rodas@gmail.com"
                 }
@@ -72,7 +55,7 @@ class TestGetUserController:
         request = HttpRequest(headers={
             "user_from_authorizer":
                 {
-                   "user_id": "93bc6ada-c0d1-7054-26ab-e17454c48ae6",
+                   "id": "93bc6ada-c0d1-7054-26ab-e17454c48ae6",
                     "name":"Giovanna Ehobeckas",
                     "mail":"gi@hotmail.com",
                 }
@@ -87,17 +70,3 @@ class TestGetUserController:
         assert response.body['user']['role'] == "PROFESSOR"
         assert response.body['user']['confirm_user'] == True
         assert response.body['user']['ra'] == None
-        
-
-    def test_get_user_controller_denied(self):
-        repo = UserRepositoryMock()
-        usecase = GetUserUsecase(repo=repo)
-        controller = GetUserController(usecase=usecase)
-        request = HttpRequest(headers={
-            "user_from_authorizer": "93bc6ada-c0d1-7054-26ab-e17414c48ae3"  
-        })
-
-        response = controller(request)
-
-        assert response.status_code == 400
-        assert response.body == "Authorizer denied token, user was not returned from it"

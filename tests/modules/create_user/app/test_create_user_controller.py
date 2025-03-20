@@ -16,7 +16,7 @@ class TestCreateUserController:
                 {
                     "id": "93bc6ada-c0d1-7054-26ab-e17414c48fe5",
                     "mail": "52.00847-4@maua.br",
-                    "name": "Jao do Bao",
+                    "displayName": "Jao do Bao",
                 }
         })
 
@@ -47,7 +47,7 @@ class TestCreateUserController:
 
         request = HttpRequest(headers={
             "user_from_authorizer": {
-                "name": "Vini Berti",
+                "displayName": "Vini Berti",
                 "mail": "50.00847-4@maua.br",
                 "id": "93bc6ada-c0d1-8754-26ab-e17414c48ae7"
             }
@@ -64,7 +64,7 @@ class TestCreateUserController:
 
         request = HttpRequest(headers={
             "user_from_authorizer": {
-                "name": 1,
+                "displayName": 1,
                 "mail": "50.00847-4@maua.br",
                 "id": "93bc6ada-c0d1-8754-26ab-e17414c48ae7"
             }
