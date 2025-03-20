@@ -68,7 +68,7 @@ class LambdaStack(Construct):
 
         token_test_authorizer_lambda = apigw.TokenAuthorizer(
             self,
-            id="TokenAuthorizerReservationMssUser",
+            id="TokenTestAuthorizerReservationMssUser",
             handler=test_authorizer_lambda,
             identity_source=apigw.IdentitySource.header("Authorization"),
             authorizer_name="LambdaAuthorizerReservationMssUser",
