@@ -33,7 +33,7 @@ def lambda_handler(event, context):
 
         # Fetching the user information from the Microsoft Graph API
         graph_endpoint = GRAPH_MICROSOFT_ENDPOINT
-        methodArn = event["methodArn"].split("/")[0]
+        methodArn = event["methodArn"]
         headers = {"Authorization": f"Bearer {token}"}
         response = http.request("GET", graph_endpoint, headers=headers)
 
@@ -44,8 +44,11 @@ def lambda_handler(event, context):
         # Parsing the user data
         user_data = json.loads(response.data.decode("utf-8"))
 
+        print("CHECK BEFORE REGEX")
+        print(user_data)
+
         # Checking if the user is from Maua
-        email_regex = r"[\w\.-]+@maua\.br"  # Regex to match the Maua email
+        email_regex = r"[\d]{2}\.[\d]{5}-[\d]@maua\.br" # Regex to match the Maua email
         if not re.match(email_regex, user_data.get("mail", "")):
             return generate_policy("user", "Deny", methodArn)
 
@@ -54,15 +57,20 @@ def lambda_handler(event, context):
         user_repo = Environments.get_user_repo()
         user = user_repo.get_user(user_data.get("id"))
 
-        # Generating the policy document
-        return generate_policy(
-            user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user.to_dict())}
+        print("CHECK PASSED REGEX AND GET USER")
+
+        policy = generate_policy(
+            user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user_data)}
         )
+
+        print(policy)
+
+        return policy
 
     # Handling exceptions
     except Exception as e:
         print(f"Error: {e}")
-        methodArn = event["methodArn"].split("/")[0]
+        methodArn = event["methodArn"]
         return generate_policy("user", "Deny", methodArn)
 
 
@@ -90,7 +98,7 @@ def generate_policy(principal_id, effect, method_arn, context=None):
                 {
                     "Action": "execute-api:Invoke",  # Action to allow
                     "Effect": effect,  # Effect (Allow or Deny)
-                    "Resource": [f"{method_arn}/*/*"],  # Resource path
+                    "Resource": method_arn,  # Resource path
                 }
             ],
         }
@@ -98,5 +106,7 @@ def generate_policy(principal_id, effect, method_arn, context=None):
 
     if context:
         auth_response["context"] = context  # Adding the context to the response
+
+    print("PASSED AUTH RESPONSE")
 
     return auth_response
