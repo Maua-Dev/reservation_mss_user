@@ -33,7 +33,7 @@ def lambda_handler(event, context):
 
         # Fetching the user information from the Microsoft Graph API
         graph_endpoint = GRAPH_MICROSOFT_ENDPOINT
-        methodArn = event["methodArn"].split("/")[0]
+        methodArn = event["methodArn"]
         headers = {"Authorization": f"Bearer {token}"}
         response = http.request("GET", graph_endpoint, headers=headers)
 
@@ -50,13 +50,13 @@ def lambda_handler(event, context):
         #     return generate_policy("user", "Deny", methodArn)
 
         return generate_policy(
-            user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user_data.to_dict())}
+            user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user_data)}
         )
 
     # Handling exceptions
     except Exception as e:
         print(f"Error: {e}")
-        methodArn = event["methodArn"].split("/")[0]
+        methodArn = event["methodArn"]
         return generate_policy("user", "Deny", methodArn)
 
 
@@ -84,7 +84,7 @@ def generate_policy(principal_id, effect, method_arn, context=None):
                 {
                     "Action": "execute-api:Invoke",  # Action to allow
                     "Effect": effect,  # Effect (Allow or Deny)
-                    "Resource": [f"{method_arn}/*/*"],  # Resource path
+                    "Resource": method_arn,  # Resource path
                 }
             ],
         }
