@@ -46,14 +46,14 @@ def lambda_handler(event, context):
 
         # Checking if the user is from Maua
         email_regex = r"[\d]{2}\.[\d]{5}-[\d]@maua\.br" # Regex to match the Maua email
-        if not re.match(email_regex, user_data.get("upn", "")):
+        if not re.match(email_regex, user_data.get("mail", "")):
             return generate_policy("user", "Deny", methodArn)
 
         print("CHECKING FOR LIFE")
         print(json.dumps(user_data))
 
         return generate_policy(
-            user_data.get("oid", "user"), "Allow", methodArn, {"user": json.dumps(user_data)}
+            user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user_data)}
         )
 
     # Handling exceptions
