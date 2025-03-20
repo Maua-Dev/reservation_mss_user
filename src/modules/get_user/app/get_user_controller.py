@@ -15,6 +15,7 @@ class GetUserController:
 
     def __call__(self, request: IRequest):
         try:
+
             if request.data.get('user_from_authorizer') is None:
                 raise Denied()
 
