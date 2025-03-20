@@ -56,26 +56,6 @@ class LambdaStack(Construct):
         self.lambda_power_tools = lambda_.LayerVersion.from_layer_version_arn(self, "Lambda_Power_Tools",
                                                                               layer_version_arn=f"arn:aws:lambda:{self.lambda_region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:22")
 
-        test_authorizer_lambda = lambda_.Function(
-            self,
-            id="TestAuthorizerReservationMssUser",
-            code=lambda_.Code.from_asset("../src/functions"),
-            handler="test_authorizer.lambda_handler",
-            layers=[self.lambda_layer, self.lambda_power_tools],
-            runtime=lambda_.Runtime.PYTHON_3_9,
-            environment=environment_variables,
-            timeout=Duration.seconds(15)
-        )
-
-        token_test_authorizer_lambda = apigw.TokenAuthorizer(
-            self,
-            id="TokenTestAuthorizerReservationMssUser",
-            handler=test_authorizer_lambda,
-            identity_source=apigw.IdentitySource.header("Authorization"),
-            authorizer_name="LambdaTestAuthorizerReservationMssUser",
-            results_cache_ttl=Duration.minutes(5)
-        )
-
 
         authorizer_lambda = lambda_.Function(
             self, "LambdaAuthorizerReservationMssUser",
@@ -95,23 +75,23 @@ class LambdaStack(Construct):
             results_cache_ttl=Duration.minutes(5)
         )
 
-        # authorizer_lambda_create_user = lambda_.Function(
-        #     self, "LambdaAuthorizerCreateUserReservationMssUser",
-        #     code = lambda_.Code.from_asset("../src/functions"),
-        #     handler = "authorizer_create_user.lambda_handler",
-        #     runtime=lambda_.Runtime.PYTHON_3_9,
-        #     layers = [self.lambda_layer, self.lambda_power_tools],
-        #     environment = environment_variables,
-        #     timeout=Duration.seconds(15)
-        # )
+        authorizer_lambda_create_user = lambda_.Function(
+            self, "LambdaAuthorizerCreateUserReservationMssUser",
+            code = lambda_.Code.from_asset("../src/functions"),
+            handler = "authorizer_create_user.lambda_handler",
+            runtime=lambda_.Runtime.PYTHON_3_9,
+            layers = [self.lambda_layer, self.lambda_power_tools],
+            environment = environment_variables,
+            timeout=Duration.seconds(15)
+        )
 
-        # token_authorizer_lambda_create_user = apigw.TokenAuthorizer(
-        #     self, "TokenAuthorizerCreateUserReservationMssUser",
-        #     handler=authorizer_lambda_create_user,
-        #     identity_source=apigw.IdentitySource.header("Authorization"),
-        #     authorizer_name="LambdaAuthorizerCreateUserReservationMssUser",
-        #     results_cache_ttl=Duration.minutes(5)
-        # )
+        token_authorizer_lambda_create_user = apigw.TokenAuthorizer(
+            self, "TokenAuthorizerCreateUserReservationMssUser",
+            handler=authorizer_lambda_create_user,
+            identity_source=apigw.IdentitySource.header("Authorization"),
+            authorizer_name="LambdaAuthorizerCreateUserReservationMssUser",
+            results_cache_ttl=Duration.minutes(5)
+        )
 
         self.get_user_function = self.create_lambda_api_gateway_integration(
             module_name="get_user",
@@ -126,7 +106,7 @@ class LambdaStack(Construct):
             method="POST",
             mss_student_api_resource=api_gateway_resource,
             environment_variables=environment_variables,
-            authorizer=token_test_authorizer_lambda
+            authorizer=token_authorizer_lambda_create_user
         )
 
         self.delete_user_function = self.create_lambda_api_gateway_integration(
