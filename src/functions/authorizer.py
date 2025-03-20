@@ -54,8 +54,11 @@ def lambda_handler(event, context):
 
 
         # TODO -> implementar o método de get user, pode ser pelo e-mail ou pelo user_id, usando o Repositorio
-        user_repo = Environments.get_user_repo()
-        user = user_repo.get_user(user_data.get("id"))
+
+        print("USER_ID: ", user_data.get("id", "did not find id"))
+
+        user_repo = Environments.get_user_repo()()
+        user = user_repo.get_user(user_id=user_data.get("id"))
 
         print("CHECK PASSED REGEX AND GET USER")
 
