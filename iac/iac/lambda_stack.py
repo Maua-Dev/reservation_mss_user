@@ -38,6 +38,7 @@ class LambdaStack(Construct):
             integration=LambdaIntegration(
                 function
             ),
+            authorization_type=apigw.AuthorizationType.CUSTOM,
             authorizer=authorizer
         )
 
@@ -71,7 +72,7 @@ class LambdaStack(Construct):
             id="TokenTestAuthorizerReservationMssUser",
             handler=test_authorizer_lambda,
             identity_source=apigw.IdentitySource.header("Authorization"),
-            authorizer_name="LambdaAuthorizerReservationMssUser",
+            authorizer_name="LambdaTestAuthorizerReservationMssUser",
             results_cache_ttl=Duration.minutes(5)
         )
 
