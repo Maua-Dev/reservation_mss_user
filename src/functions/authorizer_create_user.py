@@ -44,13 +44,17 @@ def lambda_handler(event, context):
         # Parsing the user data
         user_data = json.loads(response.data.decode("utf-8"))
 
+        print("CHECK BEFORE REGEX")
+        print(user_data)
+        print(user_data.get("mail", ""), "didn't found a fucking email")
+
         # Checking if the user is from Maua
         email_regex = r"[\d]{2}\.[\d]{5}-[\d]@maua\.br" # Regex to match the Maua email
         if not re.match(email_regex, user_data.get("mail", "")):
             return generate_policy("user", "Deny", methodArn)
 
-        print("CHECKING FOR LIFE")
-        print(json.dumps(user_data))
+        print("CHECK PASSED REGEX")
+
 
         return generate_policy(
             user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user_data)}
@@ -95,5 +99,7 @@ def generate_policy(principal_id, effect, method_arn, context=None):
 
     if context:
         auth_response["context"] = context  # Adding the context to the response
+
+    print("PASSED AUTH RESPONSE")
 
     return auth_response
