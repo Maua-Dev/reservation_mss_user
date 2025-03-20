@@ -15,41 +15,34 @@ class GetUserController:
 
     def __call__(self, request: IRequest):
         try:
-            user_from_authorizer = request.data.get('user_from_authorizer')
-
-            if user_from_authorizer is None:
+            if request.data.get('user_from_authorizer') is None:
                 raise Denied()
 
-            if isinstance(user_from_authorizer, str):
-                try:
-                    user_from_authorizer = json.loads(user_from_authorizer)
-                except json.JSONDecodeError:
-                    raise Denied()
+            user_to_get = request.data.get('user_from_authorizer')
 
+            if not isinstance(request.data.get('user_from_authorizer'), dict):
 
-            if not isinstance(user_from_authorizer, dict) or 'user_id' not in user_from_authorizer:
-                raise MissingParameters('user_id')
+                user_to_get = json.loads(request.data.get('user_from_authorizer'))
 
-            user = self.usecase(user_id=user_from_authorizer['user_id'])
+            user = self.usecase(user_id=user_to_get.get('id'))
             viewmodel = GetUserViewmodel(user)
 
             return OK(viewmodel.to_dict())
-        
+
         except Denied as err:
             return BadRequest(body=err.message)
-        
+
         except MissingParameters as err:
-            return BadRequest(body = err.message)
-        
+            return BadRequest(body=err.message)
+
         except WrongTypeParameter as err:
-            return BadRequest(body = err.message)
-        
+            return BadRequest(body=err.message)
+
         except NoItemsFound as err:
-            return NotFound(body = err.message)
-        
+            return NotFound(body=err.message)
+
         except EntityError as err:
-            return InternalServerError(body = err.message)
-        
+            return InternalServerError(body=err.message)
+
         except Exception as err:
-            return InternalServerError(body = str(err))
-        
+            return InternalServerError(body=str(err))

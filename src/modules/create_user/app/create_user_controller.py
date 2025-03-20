@@ -21,16 +21,14 @@ class CreateUserController:
             if request.data.get('user_from_authorizer') is None:
                 raise Denied()
 
-            if isinstance(request.data.get('user_from_authorizer'), str):
+            user_to_create = request.data.get('user_from_authorizer')
+
+            if not isinstance(request.data.get('user_from_authorizer'), dict):
 
                 user_to_create = json.loads(request.data.get('user_from_authorizer'))
 
-            else:
-
-                user_to_create = request.data.get('user_from_authorizer')
-
             user = self.CreateUserUseCase(
-                name=user_to_create['name'],
+                name=user_to_create.get('displayName'),
                 email=user_to_create['mail'],
                 user_id=user_to_create['id'],
             )
