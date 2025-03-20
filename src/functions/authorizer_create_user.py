@@ -46,7 +46,6 @@ def lambda_handler(event, context):
 
         print("CHECK BEFORE REGEX")
         print(user_data)
-        print(user_data.get("mail", ""), "didn't found a fucking email")
 
         # Checking if the user is from Maua
         email_regex = r"[\d]{2}\.[\d]{5}-[\d]@maua\.br" # Regex to match the Maua email
@@ -55,10 +54,13 @@ def lambda_handler(event, context):
 
         print("CHECK PASSED REGEX")
 
-
-        return generate_policy(
+        policy = generate_policy(
             user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user_data)}
         )
+
+        print(policy)
+
+        return policy
 
     # Handling exceptions
     except Exception as e:
