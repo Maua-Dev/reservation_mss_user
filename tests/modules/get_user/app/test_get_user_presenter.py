@@ -29,7 +29,7 @@ class Test_GetUserPresenter:
                 "apiId": "<urlid>",
                 "authentication": None,
                 "authorizer": {
-                    "claims":
+                    "user":
                     {
                         "id": first_user.user_id,
                         "email": first_user.email,
