@@ -36,3 +36,10 @@ class IUserRepository(ABC):
         takes new_confirm_user and new_role as optional parameters
         """
         pass
+
+    @abstractmethod
+    def get_all_users(self) -> List[User]:
+        """
+        Returns all users
+        """
+        pass
