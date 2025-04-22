@@ -11,8 +11,10 @@ class TestDeleteUserController:
         usecase = DeleteUserUsecase(repo=repo)
         controller = DeleteUserController(usecase=usecase)
 
-        request = HttpRequest(body={
-            "user_id": "93bc6ada-c0d1-7054-26ab-e17414c48ae5"
+        request = HttpRequest(headers={
+            "user_from_authorizer": {
+                "id": "93bc6ada-c0d1-7054-26ab-e17414c48ae5"
+            }
         })
 
         response = controller(request)
@@ -24,9 +26,10 @@ class TestDeleteUserController:
         usecase = DeleteUserUsecase(repo=repo)
         controller = DeleteUserController(usecase=usecase)
 
-        request = HttpRequest(body={})
+        request = HttpRequest(headers={})  
 
         response = controller(request)
 
         assert response.status_code == 400
-        assert response.body == "Field user_id is missing"
+        assert response.body == "Authorizer denied token, user was not returned from it"
+

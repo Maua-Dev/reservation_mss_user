@@ -27,6 +27,9 @@ class Test_DeleteUserPresenter:
                 "apiId": "<urlid>",
                 "authentication": None,
                 "authorizer": {
+                    "user": {
+                        "id": "93bc6ada-c0d1-7054-26ab-e17414c98ae4"
+                    }
                 },
                 "domainName": "<url-id>.lambda-url.us-west-2.on.aws",
                 "domainPrefix": "<url-id>",
