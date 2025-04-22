@@ -1,6 +1,6 @@
 import json
-from src.modules.delete_user.app.delete_user_usecase import DeleteUserUsecase
-from src.modules.delete_user.app.delete_user_viewmodel import DeleteUserViewmodel
+from .delete_user_usecase import DeleteUserUsecase
+from .delete_user_viewmodel import DeleteUserViewmodel
 from src.shared.helpers.errors.controller_errors import MissingParameters, WrongTypeParameter, Denied
 from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.helpers.errors.usecase_errors import NoItemsFound

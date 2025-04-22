@@ -2,6 +2,7 @@ import json
 from src.modules.update_user.app.update_user_presenter import lambda_handler
 
 
+
 class Test_UpdateMemberPresenter:
     def test_update_user_presenter(self):
         event = {
@@ -18,11 +19,8 @@ class Test_UpdateMemberPresenter:
                 "authorizer": {
                     "user": {
                         "id": "93bc6ada-c0d1-7054-26ab-e17414c48ae3",
-                        "ra": "24.01460-5",
                         "name": "Rodas Rodas",
-                        "email": "rodas@gmail.com",
-                        "confirm_user": False,
-                        "role": "STUDENT"
+                        "email": "rodas@gmail.com"
                     }
                 },
                 "domainName": "<url-id>.lambda-url.us-west-2.on.aws",
