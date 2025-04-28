@@ -31,6 +31,9 @@ def lambda_handler(event, context):
         # Extracting the token from the event data
         token = event["authorizationToken"].replace("Bearer ", "")
 
+        print(f"token: {token}")
+        print(f"graph_endpoint: {GRAPH_MICROSOFT_ENDPOINT}")
+
         # Fetching the user information from the Microsoft Graph API
         graph_endpoint = GRAPH_MICROSOFT_ENDPOINT
         methodArn = event["methodArn"]
