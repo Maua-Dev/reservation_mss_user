@@ -63,7 +63,7 @@ def lambda_handler(event, context):
         print("CHECK PASSED REGEX AND GET USER")
 
         policy = generate_policy(
-            user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user_data)}
+            user_data.get("id", "user"), "Allow", methodArn, {"user": user_data}
         )
 
         print(policy)
