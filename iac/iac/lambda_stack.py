@@ -72,7 +72,7 @@ class LambdaStack(Construct):
             handler=authorizer_lambda,
             identity_source=apigw.IdentitySource.header("Authorization"),
             authorizer_name="LambdaAuthorizerReservationMssUser",
-            results_cache_ttl=Duration.minutes(5)
+            results_cache_ttl=Duration.seconds(0)
         )
 
         authorizer_lambda_create_user = lambda_.Function(
@@ -90,7 +90,7 @@ class LambdaStack(Construct):
             handler=authorizer_lambda_create_user,
             identity_source=apigw.IdentitySource.header("Authorization"),
             authorizer_name="LambdaAuthorizerCreateUserReservationMssUser",
-            results_cache_ttl=Duration.minutes(5)
+            results_cache_ttl=Duration.seconds(0)
         )
 
         self.get_user_function = self.create_lambda_api_gateway_integration(
