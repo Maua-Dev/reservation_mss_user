@@ -1,6 +1,6 @@
 import json
-from src.modules.get_all_users.app.get_all_users_usecase import GetAllUserUsecase
-from src.modules.get_all_users.app.get_all_users_viewmodel import GetAllUsersViewModel
+from .get_all_users_usecase import GetAllUserUsecase
+from .get_all_users_viewmodel import GetAllUsersViewModel
 from src.shared.helpers.errors.controller_errors import Denied, MissingParameters, WrongTypeParameter
 from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.helpers.errors.usecase_errors import NoItemsFound
