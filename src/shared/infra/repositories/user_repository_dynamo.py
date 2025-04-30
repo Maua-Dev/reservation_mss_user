@@ -70,6 +70,13 @@ class UserRepositoryDynamo(IUserRepository, ABC):
 
         return user
 
+    def get_all_users(self) -> List[User]:
+        users_data = self.dynamo.get_all_items()
+
+        users = [UserDynamoDTO.from_dynamo(user).to_entity() for user in users_data.get("Items")]
+
+        return users
+
     def update_user(self,
                     user_id: str,
                     new_confirm_user: Optional[bool] = None,  #Default pra False
