@@ -129,8 +129,7 @@ class LambdaStack(Construct):
             module_name="get_all_users",  
             method="GET",  
             mss_student_api_resource=api_gateway_resource,  
-            environment_variables=environment_variables,  
-            authorizer=token_authorizer_lambda  
+            environment_variables=environment_variables
         )
 
         self.functions_that_need_dynamo_permissions = [self.get_user_function, self.create_user_function, self.get_all_users_function, 
