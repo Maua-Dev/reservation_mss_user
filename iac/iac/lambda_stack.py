@@ -56,14 +56,13 @@ class LambdaStack(Construct):
         self.lambda_power_tools = lambda_.LayerVersion.from_layer_version_arn(self, "Lambda_Power_Tools",
                                                                               layer_version_arn=f"arn:aws:lambda:{self.lambda_region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:22")
 
-
         authorizer_lambda = lambda_.Function(
             self, "LambdaAuthorizerReservationMssUser",
-            code = lambda_.Code.from_asset("../src/functions"),
-            handler = "authorizer.lambda_handler",
+            code=lambda_.Code.from_asset("../src/functions"),
+            handler="authorizer.lambda_handler",
             runtime=lambda_.Runtime.PYTHON_3_9,
-            layers = [self.lambda_layer, self.lambda_power_tools],
-            environment = environment_variables,
+            layers=[self.lambda_layer, self.lambda_power_tools],
+            environment=environment_variables,
             timeout=Duration.seconds(15)
         )
 
@@ -77,11 +76,11 @@ class LambdaStack(Construct):
 
         authorizer_lambda_create_user = lambda_.Function(
             self, "LambdaAuthorizerCreateUserReservationMssUser",
-            code = lambda_.Code.from_asset("../src/functions"),
-            handler = "authorizer_create_user.lambda_handler",
+            code=lambda_.Code.from_asset("../src/functions"),
+            handler="authorizer_create_user.lambda_handler",
             runtime=lambda_.Runtime.PYTHON_3_9,
-            layers = [self.lambda_layer, self.lambda_power_tools],
-            environment = environment_variables,
+            layers=[self.lambda_layer, self.lambda_power_tools],
+            environment=environment_variables,
             timeout=Duration.seconds(15)
         )
 
@@ -91,6 +90,14 @@ class LambdaStack(Construct):
             identity_source=apigw.IdentitySource.header("Authorization"),
             authorizer_name="LambdaAuthorizerCreateUserReservationMssUser",
             results_cache_ttl=Duration.seconds(0)
+        )
+
+        self.auth_user_function = self.create_lambda_api_gateway_integration(
+            module_name="auth_user",
+            method="GET",
+            mss_student_api_resource=api_gateway_resource,
+            environment_variables=environment_variables,
+            authorizer=token_authorizer_lambda_create_user
         )
 
         self.get_user_function = self.create_lambda_api_gateway_integration(
@@ -126,13 +133,14 @@ class LambdaStack(Construct):
         )
 
         self.get_all_users_function = self.create_lambda_api_gateway_integration(
-            module_name="get_all_users",  
-            method="GET",  
-            mss_student_api_resource=api_gateway_resource,  
+            module_name="get_all_users",
+            method="GET",
+            mss_student_api_resource=api_gateway_resource,
             environment_variables=environment_variables,
             authorizer=None
         )
 
-        self.functions_that_need_dynamo_permissions = [self.get_user_function, self.create_user_function, self.get_all_users_function, 
+        self.functions_that_need_dynamo_permissions = [self.get_user_function, self.create_user_function,
+                                                       self.get_all_users_function,
                                                        self.delete_user_function, self.update_user_function,
                                                        authorizer_lambda]
