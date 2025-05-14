@@ -37,15 +37,13 @@ class TestUserRespositoryMock:
         
         updated_user = repo_mock.update_user(
             user_id=user_id,
-            new_name="Leonardo Iorio",
-            new_email="leonardo.iorio@maua.br",
-            new_ra="12.34567-8"
+            new_confirm_user=True,
+            new_role=ROLE.PROFESSOR
         )
 
         assert updated_user is not None
-        assert updated_user.name == "Leonardo Iorio"
-        assert updated_user.email == "leonardo.iorio@maua.br"
-        assert updated_user.ra == "12.34567-8"
+        assert updated_user.role == ROLE.PROFESSOR
+        assert updated_user.confirm_user is True
     
     def test_delete_user(self):
         repo_mock = UserRepositoryMock()
@@ -81,7 +79,7 @@ class TestUserRespositoryMock:
         
         updated_user = repo_mock.update_user(
             user_id=user_id,
-            new_name="Nonexistent User"
+            new_role=ROLE.PROFESSOR
         )
         
         assert updated_user is None

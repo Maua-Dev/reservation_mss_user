@@ -79,8 +79,8 @@ class UserRepositoryDynamo(IUserRepository, ABC):
 
     def update_user(self,
                     user_id: str,
-                    new_confirm_user: Optional[bool] = None,  #Default pra False
-                    new_role: Optional[ROLE] = None) -> Optional[User]:  #Default pra student
+                    new_confirm_user: Optional[bool] = None,
+                    new_role: Optional[ROLE] = None) -> Optional[User]:
 
         user_to_update = self.get_user(user_id=user_id)
 

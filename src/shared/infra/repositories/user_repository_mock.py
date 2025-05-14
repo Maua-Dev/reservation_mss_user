@@ -88,24 +88,18 @@ class UserRepositoryMock(IUserRepository):
     def get_all_users(self) -> List[User]:
         return self.users_list
 
-    def update_user(self, user_id: str, new_name: Optional[str] = None, new_email: Optional[str] = None,
-                    new_role: Optional[ROLE] = None, new_ra: Optional[str] = None, new_confirm_user: Optional[bool] = None) -> Optional[User]:
+    def update_user(self,
+                    user_id: str,
+                    new_role: Optional[ROLE] = None,
+                    new_confirm_user: Optional[bool] = None) -> Optional[User]:
+
         user_to_update = self.get_user(user_id)
 
         if user_to_update is None:
             return None
 
-        if new_name is not None:
-            user_to_update.name = new_name
-
-        if new_email is not None:
-            user_to_update.email = new_email
-
         if new_role is not None:
             user_to_update.role = new_role
-            
-        if new_ra is not None:
-            user_to_update.ra = new_ra
             
         if new_confirm_user is not None:
             user_to_update.confirm_user = new_confirm_user
