@@ -1,92 +1,113 @@
-from decimal import Decimal
-from typing import List
+from abc import ABC, abstractmethod
+from typing import Optional, List
+
+from boto3.dynamodb.conditions import Key
 
 from src.shared.domain.entities.user import User
+from src.shared.domain.enums.role_enum import ROLE
 from src.shared.domain.repositories.user_repository_interface import IUserRepository
 from src.shared.environments import Environments
-from src.shared.helpers.errors.usecase_errors import NoItemsFound
 from src.shared.infra.dto.user_dynamo_dto import UserDynamoDTO
 from src.shared.infra.external.dynamo.datasources.dynamo_datasource import DynamoDatasource
 
 
-class UserRepositoryDynamo(IUserRepository):
+class UserRepositoryDynamo(IUserRepository, ABC):
 
     @staticmethod
-    def partition_key_format(user_id) -> str:
-        return f"user#{user_id}"
+    def partition_key_format():
+        return "user"
 
     @staticmethod
-    def sort_key_format(user_id: int) -> str:
-        return f"#{user_id}"
+    def sort_key_format(user_id: str) -> str:
+        return f"{user_id}"
 
     def __init__(self):
         self.dynamo = DynamoDatasource(endpoint_url=Environments.get_envs().endpoint_url,
                                        dynamo_table_name=Environments.get_envs().dynamo_table_name,
                                        region=Environments.get_envs().region,
                                        partition_key=Environments.get_envs().dynamo_partition_key,
-                                       sort_key=Environments.get_envs().dynamo_sort_key)
-    def get_user(self, user_id: int) -> User:
-        resp = self.dynamo.get_item(partition_key=self.partition_key_format(user_id), sort_key=self.sort_key_format(user_id))
+                                       sort_key=Environments.get_envs().dynamo_sort_key
+                                       )
 
-        if resp.get('Item') is None:
-            raise NoItemsFound("user_id")
+    def create_user(self, new_user: User) -> User:
 
-        user_dto = UserDynamoDTO.from_dynamo(resp["Item"])
-        return user_dto.to_entity()
+        user_dto = UserDynamoDTO.from_entity(user=new_user)
+        item = user_dto.to_dynamo()
 
-    def get_all_user(self) -> List[User]:
-        resp = self.dynamo.get_all_items()
-        users = []
-        for item in resp['Items']:
-            if item.get("entity") == 'user':
-                users.append(UserDynamoDTO.from_dynamo(item).to_entity())
+        resp = self.dynamo.put_item(
+            partition_key=self.partition_key_format(),
+            sort_key=self.sort_key_format(user_id=new_user.user_id),
+            item=item,
+            is_decimal=True
+        )
+
+        return new_user
+
+    def get_user_by_email(self, email: str):
+
+        user_data = self.dynamo.query(
+            key_condition_expression=Key('PK').eq(self.partition_key_format()) & Key('email').eq(email),
+            IndexName='LSI1'
+        )
+
+        if 'Items' not in user_data:
+            return None
+
+        user = UserDynamoDTO.from_dynamo(user_data.get("Items")[0]).to_entity()
+
+        return user
+
+    def get_user(self, user_id: str) -> Optional[User]:
+        user_data = self.dynamo.get_item(
+            partition_key=self.partition_key_format(),
+            sort_key=self.sort_key_format(user_id=user_id)
+        )
+
+        if 'Item' not in user_data:
+            return None
+
+        user = UserDynamoDTO.from_dynamo(user_data.get("Item")).to_entity()
+
+        return user
+
+    def get_all_users(self) -> List[User]:
+        users_data = self.dynamo.get_all_items()
+
+        users = [UserDynamoDTO.from_dynamo(user).to_entity() for user in users_data.get("Items")]
 
         return users
 
+    def update_user(self,
+                    user_id: str,
+                    new_confirm_user: Optional[bool] = None,
+                    new_role: Optional[ROLE] = None) -> Optional[User]:
 
-    def create_user(self, new_user: User) -> User:
-        print(f"repo entered.\n Repo:{self}")
-        print(self.dynamo.dynamo_table.__dict__)
-        new_user.user_id = self.get_user_counter()
-        print(f"nre user id: {new_user.user_id}")
-        user_dto = UserDynamoDTO.from_entity(user=new_user)
-        resp = self.dynamo.put_item(partition_key=self.partition_key_format(new_user.user_id),
-                                    sort_key=self.sort_key_format(user_id=new_user.user_id), item=user_dto.to_dynamo(),
-                                    is_decimal=True)
-        return new_user
+        user_to_update = self.get_user(user_id=user_id)
 
-    def delete_user(self, user_id: int) -> User:
-        resp = self.dynamo.delete_item(partition_key=self.partition_key_format(user_id), sort_key=self.sort_key_format(user_id))
+        if user_to_update is None:
+            return None
 
-        if "Attributes" not in resp:
-            raise NoItemsFound("user_id")
+        new_confirm_user = user_to_update.confirm_user if new_confirm_user is None else new_confirm_user
 
-        return UserDynamoDTO.from_dynamo(resp['Attributes']).to_entity()
+        new_role = user_to_update.role if new_role is None else new_role
 
-    def update_user(self, user_id: int, new_name: str) -> User:
+        response = self.dynamo.update_item(
+            partition_key=self.partition_key_format(),
+            sort_key=self.sort_key_format(user_id=user_id),
+            update_dict={"confirm_user": new_confirm_user, "role": new_role.value})
 
-        user = self.get_user(user_id=user_id)
+        if "Attributes" not in response:
+            return None
 
-        item_to_update = {}
+        return UserDynamoDTO.from_dynamo(response["Attributes"]).to_entity()
 
-        if new_name:
-            item_to_update['name'] = new_name
-        else:
-            raise NoItemsFound("Nothing to update")
+    def delete_user(self, user_id: str) -> Optional[User]:
+        deleted_user = self.dynamo.delete_item(
+            partition_key=self.partition_key_format(),
+            sort_key=self.sort_key_format(user_id=user_id)
+        )
 
-        resp = self.dynamo.update_item(partition_key=self.partition_key_format(user_id), sort_key=self.sort_key_format(user_id), update_dict=item_to_update)
+        if 'Attributes' not in deleted_user:
+            return None
 
-        return UserDynamoDTO.from_dynamo(resp['Attributes']).to_entity()
-
-    def get_user_counter(self) -> int:
-
-        return self.update_counter()
-
-    def update_counter(self) -> int: #TODO fix this
-        print("updating counter")
-        counter = int(self.dynamo.get_item(partition_key='COUNTER', sort_key='COUNTER')['Item']['COUNTER'])
-        print(f"counter: {counter}")
-        resp = self.dynamo.update_item(partition_key='COUNTER', sort_key='COUNTER', update_dict={'COUNTER': Decimal(counter+1)})
-        print(f"resp: {resp}")
-
-        return int(resp['Attributes']['COUNTER'])
+        return UserDynamoDTO.from_dynamo(deleted_user["Attributes"]).to_entity()

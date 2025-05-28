@@ -1,18 +1,20 @@
 import abc
 import re
-
-from src.shared.domain.enums.state_enum import STATE
+import uuid
+from typing import Optional
 from src.shared.helpers.errors.domain_errors import EntityError
+from src.shared.domain.enums.role_enum import ROLE
 
 
 class User(abc.ABC):
     name: str
     email: str
-    state: STATE
-    MIN_NAME_LENGTH = 2
-    user_id: int
+    user_id: str
+    ra: Optional[str] = None
+    role: ROLE
+    confirm_user: bool
 
-    def __init__(self, name: str, email: str, state: STATE, user_id: int = None):
+    def __init__(self, name: str, email: str, user_id: str, role: ROLE, confirm_user: bool, ra: str = None):
         if not User.validate_name(name):
             raise EntityError("name")
         self.name = name
@@ -21,40 +23,78 @@ class User(abc.ABC):
             raise EntityError("email")
         self.email = email
 
-        if type(user_id) == int:
-            if user_id < 0:
-                raise EntityError("user_id")
-
-        if type(user_id) != int and user_id is not None:
+        if not User.validate_user_id(user_id):
             raise EntityError("user_id")
-
         self.user_id = user_id
 
-        if type(state) != STATE:
-            raise EntityError("state")
-        self.state = state
+        if not User.validate_ra(ra):
+            raise EntityError("ra")
+        self.ra = ra
+
+        if not User.validate_role(role):
+            raise EntityError("role")
+        self.role = role
+
+        if not User.validate_confirm_user(confirm_user):
+            raise EntityError("confirm_user")
+        self.confirm_user = confirm_user
 
     @staticmethod
     def validate_name(name: str) -> bool:
-        if name is None:
+        if not isinstance(name, str) or not name:
             return False
-        elif type(name) != str:
-            return False
-        elif len(name) < User.MIN_NAME_LENGTH:
-            return False
-
         return True
 
     @staticmethod
     def validate_email(email: str) -> bool:
-        if email is None:
+        if not isinstance(email, str):
             return False
 
-        regex = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+        email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return re.match(email_regex, email) is not None
 
-        return bool(re.fullmatch(regex, email))
+    @staticmethod
+    def validate_user_id(user_id: str) -> bool:
+        if isinstance(user_id, str):
+            try:
+                uuid_obj = uuid.UUID(user_id)  #versão específica?
+                return True
+            except ValueError:
+                return False
 
+        return False
 
+    @staticmethod
+    def validate_ra(ra: str) -> bool:
+        if ra is None:
+            return True
+        if not isinstance(ra, str) or not ra:
+            return False
+        ra_regex = r'^\d{2}\.\d{5}-\d$'
+        if re.match(ra_regex, ra) is None:
+            return False
+        return True
 
-    def __repr__(self):
-        return f"User(name={self.name}, email={self.email}, user_id={self.user_id}, state={self.state})"
+    @staticmethod
+    def validate_role(role: ROLE) -> bool:
+        if not isinstance(role, ROLE):
+            return False
+        return True
+
+    @staticmethod
+    def validate_confirm_user(confirm_user: bool) -> bool:
+        if not isinstance(confirm_user, bool):
+            return False
+        return True
+
+    def to_dict(self):
+        return {
+            "user_id": self.user_id,
+            "name": self.name,
+            "email": self.email,
+            "ra": self.ra,
+            "role": self.role.value,
+            "confirm_user": self.confirm_user
+
+        }
+

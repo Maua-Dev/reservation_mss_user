@@ -1,25 +1,17 @@
-from decimal import Decimal
-
 import boto3
-import dotenv
-from src.shared.infra.repositories.user_repository_dynamo import UserRepositoryDynamo
 from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
-from src.shared.environments import Environments
-
+from src.shared.infra.repositories.user_repository_dynamo import UserRepositoryDynamo
 
 def setup_dynamo_table():
-    dynamo_table_name = "user_mss_template-table"
-    endpoint_url = "http://localhost:8000"
-    print("Setting up DynamoDB table...")
-
-    dynamo_client = boto3.client('dynamodb', endpoint_url=endpoint_url)
-    print("DynamoDB client created")
+    print("Setting up dynamo table")
+    dynamo_client = boto3.client('dynamodb', endpoint_url='http://localhost:8000', region_name='sa-east-1')
     tables = dynamo_client.list_tables()['TableNames']
+    table_name = "reservation_mss_user_table"
 
-    if dynamo_table_name not in tables:
-        print("Creating table...")
+    if not table_name in tables:
+        print("Creating table")
         dynamo_client.create_table(
-            TableName=dynamo_table_name,
+            TableName=table_name,
             KeySchema=[
                 {
                     'AttributeName': 'PK',
@@ -38,78 +30,69 @@ def setup_dynamo_table():
                 {
                     'AttributeName': 'SK',
                     'AttributeType': 'S'
+                },
+                {
+                    'AttributeName': 'email',
+                    'AttributeType': 'S'
                 }
-
+            ],
+            LocalSecondaryIndexes=[
+                {
+                    'IndexName': 'LSI1',
+                    'KeySchema': [
+                        {
+                            'AttributeName': 'PK',
+                            'KeyType': 'HASH'
+                        },
+                        {
+                            'AttributeName': 'email',
+                            'KeyType': 'RANGE'
+                        }
+                    ],
+                    'Projection': {
+                        'ProjectionType': 'ALL'  # Include all attributes in the index
+                    }
+                }
             ],
             BillingMode='PAY_PER_REQUEST',
         )
-        print("Waiting for table to be created...")
-        dynamo_client.get_waiter('table_exists').wait(TableName=dynamo_table_name)
-
-        print('Loading table...')
-
-        dynamodb = boto3.resource('dynamodb', endpoint_url=endpoint_url)
-
-        table = dynamodb.Table(dynamo_table_name)
-
-        print("Adding counter to table")
-
-        table.put_item(
-            Item={
-                'PK': 'COUNTER',
-                'SK': 'COUNTER',
-                'COUNTER': Decimal(0)
-            }
-        )
-
-        print('Table "user_mss_template-table" created!')
-
+        print('Table "reservation_mss_user_table" created!\n')
     else:
-        print("Table already exists!")
-
+        print('Table already exists!\n')
 
 def load_mock_to_local_dynamo():
-    setup_dynamo_table()
-    mock_repo = UserRepositoryMock()
-    dynamo_repo = UserRepositoryDynamo()
+    repo_dynamo = UserRepositoryDynamo()
+    repo_mock = UserRepositoryMock()
 
-    count = 0
+    print('Loading mock to data to dynamo...')
 
-    print('Loading mock data to dynamo...')
-    for user in mock_repo.users:
-        print(f"Loading user {user.user_id} | {user.name} to dynamo")
-        dynamo_repo.create_user(user)
-        count += 1
+    print("Loading users...")
+    user_count = 0
+    for user in repo_mock.users_list:
+        print(f'Loading user {user.name}...')
+        repo_dynamo.create_user(new_user=user)
+        user_count += 1
+    print(f'{user_count} users loaded\n')
 
-    print(f"{count} users loaded to dynamo!")
+    print("Done!")
 
 def load_mock_to_real_dynamo():
-    mock_repo = UserRepositoryMock()
-    dynamo_repo = UserRepositoryDynamo()
-
-    count = 0
-
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(dynamo_table_name=Environments.get_envs().dynamo_table_name)
-
-    print("Adding counter to table")
-
-    table.put_item(
-        Item={
-            'PK': 'COUNTER',
-            'SK': 'COUNTER',
-            'COUNTER': Decimal(0)
-        }
-    )
+    repo_dynamo = UserRepositoryDynamo()
+    repo_mock = UserRepositoryMock()
 
     print('Loading mock data to dynamo...')
-    for user in mock_repo.users:
-        print(f"Loading user {user.user_id} | {user.name} to dynamo")
-        dynamo_repo.create_user(user)
-        count += 1
 
-    print(f"{count} users loaded to dynamo!")
-    
+    print("Loading users")
+    user_count = 0
+    for user in repo_mock.users_list:
+        print(f'Loading user {user.name}...')
+        repo_dynamo.create_user(new_user=user)
+        user_count += 1
+    print(f'{user_count} users loaded\n')
+
+    print("Done!")
+
+
 if __name__ == '__main__':
-    dotenv.load_dotenv()
+    setup_dynamo_table()
     load_mock_to_local_dynamo()

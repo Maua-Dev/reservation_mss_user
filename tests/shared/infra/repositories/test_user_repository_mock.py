@@ -1,75 +1,93 @@
-from src.shared.domain.entities.user import User
-from src.shared.domain.enums.state_enum import STATE
-from src.shared.helpers.errors.usecase_errors import NoItemsFound
 from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
-import pytest
+from src.shared.domain.enums.role_enum import ROLE
+from src.shared.domain.entities.user import User
 
-
-class Test_UserRepositoryMock:
-    def test_get_user(self):
-        repo = UserRepositoryMock()
-        user = repo.get_user(1)
-
-        assert user.name == "Bruno Soller"
-        assert user.email == "soller@soller.com"
-        assert user.user_id == 1
-        assert user.state == STATE.APPROVED
-
-    def test_get_user_not_found(self):
-        repo = UserRepositoryMock()
-        with pytest.raises(NoItemsFound):
-            user = repo.get_user(69)
-
-    def test_get_all_user(self):
-        repo = UserRepositoryMock()
-        users = repo.get_all_user()
-        assert len(users) == 3
-
+class TestUserRespositoryMock:
     def test_create_user(self):
-        repo = UserRepositoryMock()
-        user = User(
-            name="Vitor Soller",
-            email="dohype@vitin.com",
-            user_id=4,
-            state=STATE.PENDING
+        repo_mock = UserRepositoryMock()
+        new_user = User(
+            name="FrontFlop",
+            email="front.flop@gmail.com",
+            user_id="93bc6ada-c0d1-7054-26ab-e17414c48ae5",
+            ra="12.34567-8",
+            role=ROLE.STUDENT,
+            confirm_user=True
+        )
+        len_before = len(repo_mock.users_list)
+
+        created_user = repo_mock.create_user(new_user)
+        assert len(repo_mock.users_list) == len_before + 1
+        assert created_user == new_user
+    
+    def test_get_user(self):
+        repo_mock = UserRepositoryMock()
+        user_id = "93bc6ada-c0d1-7054-26ab-e17414c98ae4"
+        
+        user = repo_mock.get_user(user_id)
+        
+        assert user is not None
+        assert user.user_id == user_id
+        assert user.name == "Leo Iorio"
+        assert user.role == ROLE.STUDENT
+        assert user.confirm_user is True
+    
+    def test_update_user(self):
+        repo_mock = UserRepositoryMock()
+        user_id = "93bc6ada-c0d1-7054-26ab-e17414c98ae4"
+        
+        updated_user = repo_mock.update_user(
+            user_id=user_id,
+            new_confirm_user=True,
+            new_role=ROLE.PROFESSOR
         )
 
-        repo.create_user(user)
-
-        assert repo.users[3].name == "Vitor Soller"
-        assert repo.users[3].email == "dohype@vitin.com"
-        assert repo.users[3].user_id == 4
-        assert repo.users[3].state == STATE.PENDING
-
-        assert repo.user_counter == 4
-
+        assert updated_user is not None
+        assert updated_user.role == ROLE.PROFESSOR
+        assert updated_user.confirm_user is True
+    
     def test_delete_user(self):
-        repo = UserRepositoryMock()
-        user = repo.delete_user(1)
-        assert user.name == "Bruno Soller"
-        assert user.email == "soller@soller.com"
-        assert user.user_id == 1
-        assert user.state == STATE.APPROVED
+        repo_mock = UserRepositoryMock()
+        user_id = "93bc6ada-c0d1-7054-26ab-e17414c48ae3"
+        
+        len_before = len(repo_mock.users_list)
+        deleted_user = repo_mock.delete_user(user_id)
+        
+        assert deleted_user is not None
+        assert deleted_user.user_id == user_id
+        assert len(repo_mock.users_list) == len_before - 1
+        assert repo_mock.get_user(user_id) is None
 
-    def test_delete_user_not_found(self):
-        repo = UserRepositoryMock()
-        with pytest.raises(NoItemsFound):
-            user = repo.delete_user(69)
+    def test_get_all_users(self):
+        repo_mock = UserRepositoryMock()
+        users = repo_mock.get_all_users()
+        
+        assert users is not None
+        assert len(users) == len(repo_mock.users_list)
+        assert all([isinstance(user, User) for user in users])
 
-    def test_update_user(self):
-        repo = UserRepositoryMock()
-        user = repo.update_user(1, "Bruno Guirão")
-
-        assert user.name == "Bruno Guirão"
-        assert repo.users[0].name == "Bruno Guirão"
+    def test_get_user_not_found(self):
+        repo_mock = UserRepositoryMock()
+        user_id = "nonexistent-id"
+        
+        user = repo_mock.get_user(user_id)
+        
+        assert user is None
 
     def test_update_user_not_found(self):
-        repo = UserRepositoryMock()
-        with pytest.raises(NoItemsFound):
-            user = repo.update_user(69, "Bruno Guirão")
+        repo_mock = UserRepositoryMock()
+        user_id = "nonexistent-id"
+        
+        updated_user = repo_mock.update_user(
+            user_id=user_id,
+            new_role=ROLE.PROFESSOR
+        )
+        
+        assert updated_user is None
 
-    def test_get_users_counter(self):
-        repo = UserRepositoryMock()
-
-        assert repo.get_user_counter() == 3
-
+    def test_delete_user_not_found(self):
+        repo_mock = UserRepositoryMock()
+        user_id = "nonexistent-id"
+        
+        deleted_user = repo_mock.delete_user(user_id)
+        
+        assert deleted_user is None

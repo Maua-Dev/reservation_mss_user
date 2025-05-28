@@ -1,20 +1,29 @@
-from decimal import Decimal
-
+from typing import Optional
 from src.shared.domain.entities.user import User
-from src.shared.domain.enums.state_enum import STATE
+from src.shared.domain.enums.role_enum import ROLE
 
 
 class UserDynamoDTO:
-    name: str
+    user_id: str
     email: str
-    state: STATE
-    user_id: int
+    ra: Optional[str]
+    name: str
+    role: ROLE
+    confirm_user = bool
 
-    def __init__(self, name: str, email: str, state: STATE, user_id: int):
-        self.name = name
-        self.email = email
+    def __init__(self,
+                 user_id: str,
+                 email: str,
+                 ra: Optional[str],
+                 name: str,
+                 role: ROLE,
+                 confirm_user: bool):
         self.user_id = user_id
-        self.state = state
+        self.email = email
+        self.ra = ra
+        self.name = name
+        self.role = role
+        self.confirm_user = confirm_user
 
     @staticmethod
     def from_entity(user: User) -> "UserDynamoDTO":
@@ -22,23 +31,31 @@ class UserDynamoDTO:
         Parse data from User to UserDynamoDTO
         """
         return UserDynamoDTO(
-            name=user.name,
-            email=user.email,
             user_id=user.user_id,
-            state=user.state
+            email=user.email,
+            ra=user.ra,
+            name=user.name,
+            role=user.role,
+            confirm_user=user.confirm_user
         )
 
     def to_dynamo(self) -> dict:
         """
         Parse data from UserDynamoDTO to dict
         """
-        return {
+        data = {
             "entity": "user",
-            "name": self.name,
+            "user_id": self.user_id,
             "email": self.email,
-            "user_id": Decimal(self.user_id),
-            "state": self.state.value
+            "ra": self.ra,
+            "name": self.name,
+            "role": self.role.value,
+            "confirm_user": self.confirm_user
         }
+
+        data = {key: (value if value is not None else 'None') for key, value in data.items()}
+
+        return data
 
     @staticmethod
     def from_dynamo(user_data: dict) -> "UserDynamoDTO":
@@ -46,26 +63,32 @@ class UserDynamoDTO:
         Parse data from DynamoDB to UserDynamoDTO
         @param user_data: dict from DynamoDB
         """
-        return UserDynamoDTO(
-            name=user_data["name"],
-            email=user_data["email"],
-            user_id=int(user_data["user_id"]),
-            state=STATE(user_data["state"])
+        user = UserDynamoDTO(
+            user_id=str(user_data["user_id"]),
+            email=str(user_data["email"]),
+            ra=user_data["ra"] if user_data["ra"] != 'None' else None,
+            name=str(user_data["name"]),
+            role=next((role for role in ROLE if role.value == user_data["role"]), ROLE.STUDENT),
+            confirm_user=user_data["confirm_user"]
         )
+
+        return user
 
     def to_entity(self) -> User:
         """
         Parse data from UserDynamoDTO to User
         """
         return User(
-            name=self.name,
-            email=self.email,
             user_id=self.user_id,
-            state=self.state
+            email=self.email,
+            ra=self.ra,
+            name=self.name,
+            role=self.role,
+            confirm_user=self.confirm_user
         )
 
     def __repr__(self):
-        return f"UserDynamoDto(name={self.name}, email={self.email}, user_id={self.user_id}, state={self.state})"
+        return f"UserDynamoDto(user_id={self.user_id}, email={self.email}, ra={self.ra}, name={self.name}, role={self.role.value}, confirm_user={self.confirm_user})"
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__

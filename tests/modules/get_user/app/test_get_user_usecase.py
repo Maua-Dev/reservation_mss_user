@@ -1,33 +1,31 @@
 import pytest
 
 from src.modules.get_user.app.get_user_usecase import GetUserUsecase
+from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
 from src.shared.helpers.errors.domain_errors import EntityError
 from src.shared.helpers.errors.usecase_errors import NoItemsFound
-from src.shared.infra.external.observability.observability_mock import ObservabilityMock
-from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
 
-observability = ObservabilityMock(module_name="get_user")
 
-class Test_GetUserUsecase:
-
-    def test_get_user(self):
+class TestGetUserUsecase:
+    def test_get_user_usecase(self):
         repo = UserRepositoryMock()
-        usecase = GetUserUsecase(repo, observability=observability)
+        usecase = GetUserUsecase(repo=repo)
+        first_user = repo.users_list[0].user_id
+        response = usecase(first_user)
 
-        user = usecase(user_id=repo.users[1].user_id)
+        assert response == repo.users_list[0]
 
-        assert repo.users[1] == user
 
-    def test_get_user_not_found(self):
-        repo = UserRepositoryMock()
-        usecase = GetUserUsecase(repo, observability=observability)
-
-        with pytest.raises(NoItemsFound):
-            user = usecase(user_id=999)
-
-    def test_get_user_invalid_id(self):
-        repo = UserRepositoryMock()
-        usecase = GetUserUsecase(repo, observability=observability)
-
+    def test_get_user_usecase_invalid_user_id(self):
         with pytest.raises(EntityError):
-            user = usecase(user_id="invalid")
+            repo = UserRepositoryMock()
+            usecase = GetUserUsecase(repo=repo)
+            reponse = usecase("invalid_user_id")
+
+    def test_get_user_usecase_no_items_found(self):
+        with pytest.raises(NoItemsFound):
+            repo = UserRepositoryMock()
+            usecase = GetUserUsecase(repo=repo)
+            response = usecase("93bc6ada-c0d1-7054-26ab-e17414c48ae9")
+
+

@@ -1,51 +1,114 @@
-from typing import List
-
+from typing import List, Optional
 from src.shared.domain.entities.user import User
-from src.shared.domain.enums.state_enum import STATE
+from src.shared.domain.enums.role_enum import ROLE
 from src.shared.domain.repositories.user_repository_interface import IUserRepository
-from src.shared.helpers.errors.usecase_errors import NoItemsFound
 
 
 class UserRepositoryMock(IUserRepository):
-    users: List[User]
-    user_counter: int
+    users_list: List[User]
 
     def __init__(self):
-        self.users = [
-            User(name="Bruno Soller", email="soller@soller.com", user_id=1, state=STATE.APPROVED),
-            User(name="Vitor Brancas", email="brancas@brancas.com", user_id=2, state=STATE.REJECTED),
-            User(name="João Vilas", email="bruno@bruno.com", user_id=3, state=STATE.PENDING)
+        self.users_list = [
+            User(
+                name="Rodas Rodas",
+                email="rodas@gmail.com",
+                user_id="93bc6ada-c0d1-7054-26ab-e17414c48ae3",
+                ra=None,
+                role=ROLE.ADMIN,
+                confirm_user=True
+            ),
+            User(
+                name="Rubio Rosa",
+                email="26.96379-5@maua.br",
+                user_id="93bc6ada-c0d1-7054-26ab-e17414c48ae5",
+                ra="26.96379-5",
+                role=ROLE.ADMIN,
+                confirm_user=False
+            ),
+            User(
+                name="Leo Iorio",
+                email="29.91279-6@maua.br",
+                user_id="93bc6ada-c0d1-7054-26ab-e17414c98ae4",
+                ra="29.91279-6",
+                role=ROLE.STUDENT,
+                confirm_user=True
+            ),
+            User(
+                name="Giovanna Ehobeckas",
+                email="gi@hotmail.com",
+                user_id="93bc6ada-c0d1-7054-26ab-e17454c48ae6",
+                ra=None,
+                role=ROLE.PROFESSOR,
+                confirm_user=True
+            ),
+            User(
+                name="Vini Berti",
+                email="berti@gmail.com",
+                user_id="93bc6ada-c0d1-8754-26ab-e17414c48ae7",
+                ra=None,
+                role=ROLE.PROFESSOR,
+                confirm_user=False
+            ),
+            User(
+                name="Gustavo Gus",
+                email="timao@gmail.com",
+                user_id="77bc6ada-c0d1-8754-26ab-e17414c48ae8",
+                ra=None,
+                role=ROLE.ADMIN,
+                confirm_user=False
+            ),
+            User(
+                name="Relâmpago Marquinhos",
+                email="12.12345-8@maua.br",
+                user_id="93bc6ada-c0e1-7054-26ab-e17414c48ae9",
+                ra="12.12345-8",
+                role=ROLE.PROFESSOR,
+                confirm_user=False
+            ),
+            User(
+                name="Bart Simpson",
+                email="springfield@gmail.com",
+                user_id="93bc6ada-c0d1-7054-26ab-e17414c98aa7",
+                ra="29.89779-6",
+                role=ROLE.STUDENT,
+                confirm_user=False
+            )
         ]
-        self.user_counter = 3
 
-    def get_user(self, user_id: int) -> User:
-        for user in self.users:
+    def create_user(self, user: User) -> User:
+        self.users_list.append(user)
+        return user
+
+    def get_user(self, user_id: str) -> User:
+        for user in self.users_list:
             if user.user_id == user_id:
                 return user
-        raise NoItemsFound("user_id")
+        return None
 
-    def get_all_user(self) -> List[User]:
-        return self.users
+    def get_all_users(self) -> List[User]:
+        return self.users_list
 
-    def create_user(self, new_user: User) -> User:
-        self.users.append(new_user)
-        self.user_counter += 1
-        return new_user
+    def update_user(self,
+                    user_id: str,
+                    new_role: Optional[ROLE] = None,
+                    new_confirm_user: Optional[bool] = None) -> Optional[User]:
 
-    def delete_user(self, user_id: int) -> User:
-        for idx, user in enumerate(self.users):
+        user_to_update = self.get_user(user_id)
+
+        if user_to_update is None:
+            return None
+
+        if new_role is not None:
+            user_to_update.role = new_role
+            
+        if new_confirm_user is not None:
+            user_to_update.confirm_user = new_confirm_user
+
+        return user_to_update
+
+    def delete_user(self, user_id: str) -> Optional[User]:
+        for user in self.users_list:
             if user.user_id == user_id:
-                return self.users.pop(idx)
-
-        raise NoItemsFound("user_id")
-
-    def update_user(self, user_id: int, new_name: str) -> User:
-        for user in self.users:
-            if user.user_id == user_id:
-                user.name = new_name
+                self.users_list.remove(user)
                 return user
-
-        raise NoItemsFound("user_id")
-
-    def get_user_counter(self) -> int:
-        return self.user_counter
+        return None
