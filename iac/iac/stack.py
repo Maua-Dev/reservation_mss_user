@@ -7,17 +7,30 @@ from constructs import Construct
 from aws_cdk.aws_apigateway import RestApi, Cors
 
 from .lambda_stack import LambdaStack
-from .template_dynamo_table import TemplateDynamoTable
+from .dynamo_table import ReservationMssUserDynamoTable
+
+import os
 
 
-class TemplateStack(Stack):
+class ReservationMssUserStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        self.rest_api = RestApi(self, "Template_RestApi",
-                                    rest_api_name="Template_RestApi",
-                                    description="This is the Template RestApi",
+        self.aws_region = os.environ.get("AWS_REGION")
+
+        self.github_ref = os.environ.get('GITHUB_REF_NAME')
+        stage = ''
+        if 'prod' in self.github_ref:
+            stage = 'PROD'
+        elif 'homology' in self.github_ref:
+            stage = 'HOMOLOG'
+        else:
+            stage = 'DEV'
+
+        self.rest_api = RestApi(self, "ReservationMssUser_RestApi",
+                                    rest_api_name="ReservationMssUser_RestApi",
+                                    description="This is the ReservationMssUser RestApi",
                                     default_cors_preflight_options=
                                     {
                                         "allow_origins": Cors.ALL_ORIGINS,
@@ -26,7 +39,7 @@ class TemplateStack(Stack):
                                     },
                                 )
 
-        api_gateway_resource = self.rest_api.root.add_resource("mss-template", default_cors_preflight_options=
+        api_gateway_resource = self.rest_api.root.add_resource("reservation-mss-user", default_cors_preflight_options=
         {
             "allow_origins": Cors.ALL_ORIGINS,
             "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -34,14 +47,15 @@ class TemplateStack(Stack):
         }
                                                                )
 
-        self.dynamo_table = TemplateDynamoTable(self, "TemplateDynamoTable")
+        self.dynamo_table = ReservationMssUserDynamoTable(self, "ReservationMssUserDynamoTable")
 
         ENVIRONMENT_VARIABLES = {
-            "STAGE": "DEV",
+            "STAGE": stage,
             "DYNAMO_TABLE_NAME": self.dynamo_table.table.table_name,
             "DYNAMO_PARTITION_KEY": "PK",
             "DYNAMO_SORT_KEY": "SK",
-            "REGION": self.region,
+            "REGION": self.aws_region,
+            "GRAPH_MICROSOFT_ENDPOINT": os.getenv("GRAPH_MICROSOFT_ENDPOINT")
         }
 
 

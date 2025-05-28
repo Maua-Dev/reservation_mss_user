@@ -1,24 +1,41 @@
 from src.shared.domain.entities.user import User
-from src.shared.domain.enums.state_enum import STATE
+from src.shared.domain.enums.role_enum import ROLE
+from typing import Optional
 
-
-class GetUserViewmodel:
-    user_id: int
+class UserViewmodel:
     name: str
     email: str
-    state: STATE
+    user_id: str
+    ra: Optional[str] = None
+    role: ROLE
+    confirm_user: bool
 
     def __init__(self, user: User):
-        self.user_id = user.user_id
         self.name = user.name
         self.email = user.email
-        self.state = user.state
+        self.user_id = user.user_id
+        self.ra = user.ra
+        self.role = user.role
+        self.confirm_user = user.confirm_user
 
     def to_dict(self):
         return {
-            'user_id': self.user_id,
-            'name': self.name,
-            'email': self.email,
-            'state': self.state.value,
-            'message': "the user was retrieved successfully"
+            "name": self.name,
+            "email": self.email,
+            "user_id": self.user_id,
+            "ra": self.ra,
+            "role": self.role.value if self.role else None,
+            "confirm_user": self.confirm_user
+        }
+    
+class GetUserViewmodel(UserViewmodel):
+    user_viewmodel: UserViewmodel
+
+    def __init__(self, user: User):
+        self.user_viewmodel = UserViewmodel(user)
+
+    def to_dict(self):
+        return{
+            "user": self.user_viewmodel.to_dict(),
+            "message": "the user was retrieved"
         }

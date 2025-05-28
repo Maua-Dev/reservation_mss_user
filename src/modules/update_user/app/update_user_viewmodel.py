@@ -1,25 +1,33 @@
+from typing import Optional
 from src.shared.domain.entities.user import User
-from src.shared.domain.enums.state_enum import STATE
+from src.shared.domain.enums.role_enum import ROLE
 
 
-class UpdateUserViewmodel:
-    user_id: int
-    name: str
-    email: str
-    state: STATE
+class UserViewModel:
+    user_id: str
+    role: ROLE
+    confirm_user: bool
 
     def __init__(self, user: User):
         self.user_id = user.user_id
-        self.name = user.name
-        self.email = user.email
-        self.state = user.state
+        self.role = user.role
+        self.confirm_user = user.confirm_user
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             'user_id': self.user_id,
-            'name': self.name,
-            'email': self.email,
-            'state': self.state.value,
-            'message': "the user was updated successfully"
+            'role': self.role.value,
+            'confirm_user': self.confirm_user
         }
 
+class UpdateUserViewModel:
+    user: UserViewModel
+
+    def __init__(self, user: User):
+        self.user = UserViewModel(user=user)
+
+    def to_dict(self) -> dict:
+        return {
+            'updated_user': self.user.to_dict(),
+            'message': 'the user was updated'
+        }

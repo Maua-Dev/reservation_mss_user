@@ -1,18 +1,21 @@
 from src.shared.domain.entities.user import User
 from src.shared.domain.repositories.user_repository_interface import IUserRepository
 from src.shared.helpers.errors.domain_errors import EntityError
-from src.shared.infra.external.observability.observability_aws import ObservabilityAWS
-
+from src.shared.helpers.errors.usecase_errors import NoItemsFound
 
 class GetUserUsecase:
-    def __init__(self, repo: IUserRepository, observability: ObservabilityAWS):
-        self.repo = repo
-        self.observability = observability
+    repo: IUserRepository
 
-    def __call__(self, user_id: int) -> User:
-        self.observability.log_usecase_in()
-        if type(user_id) != int:
+    def __init__(self, repo: IUserRepository):
+        self.repo = repo
+
+    def __call__(self, user_id: str) -> User:
+        if not User.validate_user_id(user_id):
             raise EntityError("user_id")
+        
         user = self.repo.get_user(user_id)
-        self.observability.log_usecase_out()
+
+        if user is None:
+            raise NoItemsFound("user_id")
+        
         return user

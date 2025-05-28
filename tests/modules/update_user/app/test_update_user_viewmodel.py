@@ -1,20 +1,24 @@
-from src.modules.update_user.app.update_user_viewmodel import UpdateUserViewmodel
+from src.shared.domain.enums.role_enum import ROLE
 from src.shared.domain.entities.user import User
-from src.shared.domain.enums.state_enum import STATE
+from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
+from src.modules.update_user.app.update_user_viewmodel import UpdateUserViewModel
+class TestUpdateUserViewModel:
 
-
-class Test_UpadateUserViewmodel:
     def test_update_user_viewmodel(self):
-        user = User(user_id=1, name="Test", email="teste@test.com", state=STATE.APPROVED)
+        user_id = "93bc6ada-c0d1-8754-26ab-e17414c48ae7"
+        repo = UserRepositoryMock()
 
-        updated_useer_viewmodel = UpdateUserViewmodel(user)
+        user = repo.get_user(user_id)
+
+        viewmodel = UpdateUserViewModel(user=user)
 
         expected = {
-            'user_id': 1,
-            'name': "Test",
-            'email': "teste@test.com",
-            'state': "APPROVED",
-            'message': "the user was updated successfully"
+            'updated_user': {
+                'user_id': user.user_id,
+                'role': user.role.value,
+                'confirm_user': user.confirm_user,
+            },
+            'message': 'the user was updated'
         }
 
-        assert expected == updated_useer_viewmodel.to_dict()
+        assert viewmodel.to_dict() == expected
