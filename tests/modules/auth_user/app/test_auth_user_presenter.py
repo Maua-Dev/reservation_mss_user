@@ -75,7 +75,7 @@ class TestAuthUserPresenter:
                 "authentication": None,
                 "authorizer": {
                     "user": json.dumps({
-                        "id": "93bc6ada-c0d1-7054-26ab-e17414c48fe5",
+                        "id": "13bc6ada-c0d1-7054-26ab-e17414c48fe5",
                         "mail": "ceaf@maua.br",
                         "displayName": "CEAF",
                     })
