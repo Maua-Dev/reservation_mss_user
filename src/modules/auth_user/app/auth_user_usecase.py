@@ -20,7 +20,7 @@ class AuthUserUsecase:
         if self.repo.get_user(user_id=user_id) is not None:
             return self.repo.get_user(user_id=user_id), False
         
-        if email == "ceaf@maua.br":
+        if email == "ceaf@maua.br" or email == "dev@maua.br":
             return self.repo.create_user(User(
                 user_id=user_id,
                 name=name,
