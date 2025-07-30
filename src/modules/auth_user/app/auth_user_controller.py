@@ -26,6 +26,7 @@ class AuthUserController:
 
                 user_to_create = json.loads(request.data.get('user_from_authorizer'))
 
+            # ????
             user = self.AuthUserUseCase(
                 name=user_to_create.get('displayName'),
                 email=user_to_create['mail'],
