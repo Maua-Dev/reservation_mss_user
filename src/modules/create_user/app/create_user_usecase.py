@@ -18,7 +18,7 @@ class CreateUserUsecase:
 
         if self.repo.get_user(user_id=user_id) is not None:
             raise DuplicatedItem('user_id')
-
+        
         ra_pattern = r'[0-9]+\.[0-9]+-[0-9]+@maua\.br'
         has_ra = re.match(ra_pattern, email)
 
