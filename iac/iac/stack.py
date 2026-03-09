@@ -29,19 +29,9 @@ class ReservationMssUserStack(Stack):
             stage = 'DEV'
             
         cors_options = CorsOptions(
-            allow_origins =
-                [
-                    "https://reservation.maua.br",
-                    "https://reservation.devmaua.com"
-                ] 
-            if stage == 'PROD'
-            else 
-                [
-                    "https://reservation.hml.devmaua.com",
-                    "https://reservation.dev.devmaua.com",
-                    "https://localhost:3000",
-                    "http://localhost:3000"
-                ],
+            allow_origins=Cors.ALL_ORIGINS, 
+            # por agora deixamos o cors aberto pois outros serciços como o reservation api e reservation alerts
+            # fazem https para essa api. nao temos acesso programaticamente a esses endpoints por enquanto. 
             allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             allow_headers=Cors.DEFAULT_HEADERS
         )
