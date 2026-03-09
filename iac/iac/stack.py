@@ -34,7 +34,7 @@ class ReservationMssUserStack(Stack):
             description="This is the ReservationMssUser RestApi",
             default_cors_preflight_options=
             {
-                "allow_origins": ["https://reservation.maua.br"] if stage == "PROD" else ["https://reservation.maua.br", "http://localhost:3000"],
+                "allow_origins": Cors.ALL_ORIGINS,
                 "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                 "allow_headers": Cors.DEFAULT_HEADERS
             }
@@ -44,7 +44,7 @@ class ReservationMssUserStack(Stack):
             "reservation-mss-user", 
             default_cors_preflight_options=
                 {
-                    "allow_origins": ["https://reservation.maua.br"] if stage == "PROD" else ["https://reservation.maua.br", "http://localhost:3000"],
+                    "allow_origins": Cors.ALL_ORIGINS,
                     "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
                     "allow_headers": Cors.DEFAULT_HEADERS
                 }
