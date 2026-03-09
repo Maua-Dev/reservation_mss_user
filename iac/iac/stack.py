@@ -4,7 +4,7 @@ from aws_cdk import (
     # aws_sqs as sqs,
 )
 from constructs import Construct
-from aws_cdk.aws_apigateway import RestApi, Cors, CorsOptions
+from aws_cdk.aws_apigateway import RestApi, Cors, CorsOptions, GatewayResponse, ResponseType
 
 from .lambda_stack import LambdaStack
 from .dynamo_table import ReservationMssUserDynamoTable
@@ -41,6 +41,32 @@ class ReservationMssUserStack(Stack):
             "ReservationMssUser_RestApi",
             description="This is the ReservationMssUser RestApi",
             default_cors_preflight_options=cors_options
+        )
+        
+        GatewayResponse(
+            self,
+            "AuthorizerDenyResponse",
+            rest_api=self.rest_api,
+            type=ResponseType.ACCESS_DENIED,
+            response_headers={
+                "Access-Control-Allow-Origin": "'*'",
+                "Access-Control-Allow-Headers": "'*'",
+                "Access-Control-Allow-Methods": "'*'",
+            },
+            status_code="403"
+        )
+        
+        GatewayResponse(
+            self,
+            "AuthorizerUnauthorizedResponse",
+            rest_api=self.rest_api,
+            type=ResponseType.UNAUTHORIZED,
+            response_headers={
+                "Access-Control-Allow-Origin": "'*'",
+                "Access-Control-Allow-Headers": "'*'",
+                "Access-Control-Allow-Methods": "'*'",
+            },
+            status_code="401"
         )
 
         api_gateway_resource = self.rest_api.root.add_resource(
