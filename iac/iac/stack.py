@@ -4,7 +4,7 @@ from aws_cdk import (
     # aws_sqs as sqs,
 )
 from constructs import Construct
-from aws_cdk.aws_apigateway import RestApi, Cors
+from aws_cdk.aws_apigateway import RestApi, Cors, CorsOptions
 
 from .lambda_stack import LambdaStack
 from .dynamo_table import ReservationMssUserDynamoTable
@@ -27,27 +27,35 @@ class ReservationMssUserStack(Stack):
             stage = 'HOMOLOG'
         else:
             stage = 'DEV'
+            
+        cors_options = CorsOptions(
+            allow_origins =
+                [
+                    "https://reservation.maua.br",
+                    "https://reservation.devmaua.com"
+                ] 
+            if stage == 'PROD'
+            else 
+                [
+                    "https://reservation.hml.devmaua.com",
+                    "https://reservation.dev.devmaua.com",
+                    "https://localhost:3000",
+                    "http://localhost:3000"
+                ],
+            allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            allow_headers=Cors.DEFAULT_HEADERS
+        )
 
         self.rest_api = RestApi(
             self, 
             "ReservationMssUser_RestApi",
             description="This is the ReservationMssUser RestApi",
-            default_cors_preflight_options=
-            {
-                "allow_origins": Cors.ALL_ORIGINS,
-                "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                "allow_headers": Cors.DEFAULT_HEADERS
-            }
+            default_cors_preflight_options=cors_options
         )
 
         api_gateway_resource = self.rest_api.root.add_resource(
             "reservation-mss-user", 
-            default_cors_preflight_options=
-                {
-                    "allow_origins": Cors.ALL_ORIGINS,
-                    "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                    "allow_headers": Cors.DEFAULT_HEADERS
-                }
+            default_cors_preflight_options=cors_options
         )
 
         self.dynamo_table = ReservationMssUserDynamoTable(self, "ReservationMssUserDynamoTable")
