@@ -4,7 +4,7 @@ import os
 import aws_cdk as cdk
 from adjust_layer_directory import adjust_layer_directory
 
-from iac.stack import ReservationMssUserStack as Stack
+from iac.stack.iac_stack import IacStack
 
 
 
@@ -33,13 +33,21 @@ else:
     stage = 'TEST'
 
 tags = {
-    'project': 'MauaReservation',
+    'project': 'ReservationMssUser',
     'stage': stage,
     'stack': 'BACK',
     'owner': 'DevCommunity'
 }
 
-stack = Stack(app, stack_name, env=cdk.Environment(account=aws_account_id, region=aws_region), tags=tags)
+stack = IacStack(
+    app, 
+    stack_name, 
+    env=cdk.Environment(
+        account=aws_account_id, 
+        region=aws_region
+    ), 
+    tags=tags
+)
 
 
 app.synth()

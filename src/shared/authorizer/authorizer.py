@@ -6,6 +6,11 @@ import urllib3
 from src.shared.environments import Environments
 
 
+def _is_onboarding_route(method_arn: str) -> bool:
+    """User may not exist in our DB yet (first login / self-registration)."""
+    return "/auth-user" in method_arn or "/create-user" in method_arn
+
+
 def lambda_handler(event, context):
     """
     This function is used to authorize the user to access the API Gateway.
@@ -31,10 +36,8 @@ def lambda_handler(event, context):
         # Extracting the token from the event data
         token = event["authorizationToken"].replace("Bearer ", "")
 
-
         print(f"token: {token}")
         print(f"graph_endpoint: {GRAPH_MICROSOFT_ENDPOINT}")
-
 
         # Fetching the user information from the Microsoft Graph API
         graph_endpoint = GRAPH_MICROSOFT_ENDPOINT
@@ -57,7 +60,11 @@ def lambda_handler(event, context):
         if not re.match(email_regex, user_data.get("mail", "")):
             return generate_policy("user", "Deny", methodArn)
 
-        print("CHECK PASSED REGEX")
+        if not _is_onboarding_route(methodArn):
+            print("USER_ID: ", user_data.get("id", "did not find id"))
+            user_repo = Environments.get_user_repo_instance()
+            user_repo.get_user(user_id=user_data.get("id"))
+            print("CHECK PASSED REGEX AND GET USER")
 
         policy = generate_policy(
             user_data.get("id", "user"), "Allow", methodArn, {"user": json.dumps(user_data)}
