@@ -5,6 +5,7 @@ import urllib3
 
 from src.shared.environments import Environments
 
+# essa função serve para determinar o caso de uso do checkup de usuário no nosso próprio banco
 
 def _is_onboarding_route(method_arn: str) -> bool:
     """User may not exist in our DB yet (first login / self-registration)."""

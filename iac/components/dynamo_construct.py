@@ -39,14 +39,13 @@ class DynamoConstruct(Construct):
             removal_policy=(
                 RemovalPolicy.RETAIN if stage.lower() == "prod" else RemovalPolicy.DESTROY
             ),
-            local_secondary_indexes=[
-                dynamodb.LocalSecondaryIndexProps(
-                    index_name="LSI1",
-                    sort_key=dynamodb.Attribute(
-                        name="email",
-                        type=dynamodb.AttributeType.STRING,
-                    ),
-                    projection_type=dynamodb.ProjectionType.ALL,
-                ),
-            ],
+        )
+
+        self.table.add_local_secondary_index(
+            index_name="LSI1",
+            sort_key=dynamodb.Attribute(
+                name="email",
+                type=dynamodb.AttributeType.STRING,
+            ),
+            projection_type=dynamodb.ProjectionType.ALL,
         )
