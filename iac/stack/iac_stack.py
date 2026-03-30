@@ -44,6 +44,9 @@ class IacStack(Stack):
             self,
             construct_id="ReservationMssUserSsm",
             stage=stage,
+            # atenção para esse próximo parâmetro. de preferencia deixe tudo minusculo sem _
+            # isso deve corresponder ao prefixo de caminho passado no CD dos outros mss (inclusive front)
+            # que acessam os parametros no ssm.
             mss_name_identification_for_path="reservationmssuser",
             api=self.apigw_construct.rest_api,
             api_gateway_resource=self.apigw_construct.api_gateway_resource

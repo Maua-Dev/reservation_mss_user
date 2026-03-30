@@ -47,8 +47,10 @@ def lambda_handler(event, context):
         response = http.request("GET", graph_endpoint, headers=headers)
 
         # Checking if the request was successful
+        print(f"graph_status: {response.status}")
+        print(f"graph_response_body: {response.data.decode('utf-8')}")
         if response.status != 200:
-            raise Exception("Failed to fetch user information")
+            raise Exception(f"Failed to fetch user information - status: {response.status}")
 
         # Parsing the user data
         user_data = json.loads(response.data.decode("utf-8"))
