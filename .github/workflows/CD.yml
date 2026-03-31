@@ -51,7 +51,7 @@ jobs:
           else
             echo "Invalid branch name!" && exit 1
           fi
-          echo "STACK_NAME=ReservationStackMssUser${{env.STAGE}}" >> $GITHUB_ENV
+          echo "STACK_NAME=ReservationStackMssUser" >> $GITHUB_ENV
 
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4

@@ -14,36 +14,35 @@ import os
 
 class IacStack(Stack):
 
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
-        super().__init__(scope, construct_id, **kwargs)
-
-        self.aws_region = os.environ.get("AWS_REGION")
-
-        self.github_ref = os.environ.get('GITHUB_REF_NAME')
-        stage = ''
-        if 'prod' in self.github_ref:
-            stage = 'PROD'
-        elif 'homolog' in self.github_ref:
-            stage = 'HOMOLOG'
-        else:
-            stage = 'DEV'
+    def __init__(
+        self, 
+        scope: Construct, 
+        stack_id: str, 
+        stage: str,
+        stack_name,
+        **kwargs
+    ) -> None:
+        super().__init__(scope, stack_id, **kwargs)
             
         self.apigw_construct = ApigwConstruct(
             self,
-            construct_id="ReservationMssUserApiGateway",
-            stage=stage
+            construct_id=f"{stack_name}_Apigw",
+            stage=stage,
+            stack_name=stack_name
         )
         
         self.dynamo_construct = DynamoConstruct(
             self,
-            construct_id="ReservationMssUserDynamo",
+            construct_id=f"{stack_name}_Dynamo",
             stage=stage,
+            stack_name=stack_name
         )
         
         self.ssm_construct = SsmConstruct(
             self,
-            construct_id="ReservationMssUserSsm",
+            construct_id=f"{stack_name}Ssm",
             stage=stage,
+            stack_name=stack_name,
             # atenção para esse próximo parâmetro. de preferencia deixe tudo minusculo sem _
             # isso deve corresponder ao prefixo de caminho passado no CD dos outros mss (inclusive front)
             # que acessam os parametros no ssm.
@@ -53,7 +52,7 @@ class IacStack(Stack):
         )
 
         ENVIRONMENT_VARIABLES = {
-            "STAGE": stage,
+            "STAGE": stage.upper(),
             "DYNAMO_TABLE_NAME": self.dynamo_construct.table.table_name,
             "DYNAMO_PARTITION_KEY": "PK",
             "DYNAMO_SORT_KEY": "SK",
@@ -66,7 +65,9 @@ class IacStack(Stack):
 
         self.lambda_construct = LambdaConstruct(
             self,
-            construct_id="ReservationMssUserLambda",
+            construct_id=f"{stack_name}_Lambda",
+            stage=stage,
+            stack_name=stack_name,
             api_gateway_resource=self.apigw_construct.api_gateway_resource,
             environment_variables=ENVIRONMENT_VARIABLES,
         )
