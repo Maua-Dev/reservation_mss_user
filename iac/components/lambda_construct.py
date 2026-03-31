@@ -68,7 +68,7 @@ class LambdaConstruct(Construct):
             id=f"{stack_name}_LambdaLayer_{stage}",
             layer_version_name=f"{stack_name}-LambdaLayer-{self.stage}",
             # a pasta .build foi obtida do adjust layer directory, certifique-se de que a configuração da pasta layer gerada la esta igual
-            code=lambda_.Code.from_asset("./build"),
+            code=lambda_.Code.from_asset("./lambda_layer_out_temp"),
             compatible_runtimes=[lambda_.Runtime("python3.13")]
         )
         
