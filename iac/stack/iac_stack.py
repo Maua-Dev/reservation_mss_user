@@ -2,6 +2,7 @@ from aws_cdk import (
     # Duration,
     Stack,
     # aws_sqs as sqs,
+    Aws
 )
 from constructs import Construct
 
@@ -56,7 +57,7 @@ class IacStack(Stack):
             "DYNAMO_TABLE_NAME": self.dynamo_construct.table.table_name,
             "DYNAMO_PARTITION_KEY": "PK",
             "DYNAMO_SORT_KEY": "SK",
-            "REGION": self.aws_region,
+            "REGION": Aws.REGION,
             
             # essa variável vem do github actions como um secret
             
