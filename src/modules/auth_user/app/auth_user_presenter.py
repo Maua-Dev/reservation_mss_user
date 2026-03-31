@@ -3,7 +3,7 @@ from .auth_user_usecase import AuthUserUsecase
 from src.shared.helpers.external_interfaces.http_lambda_requests import LambdaHttpRequest, LambdaHttpResponse
 from src.shared.environments import Environments
 
-repo = Environments.get_user_repo()()
+repo = Environments.get_user_repo_instance()
 usecase = AuthUserUsecase(repo)
 controller = AuthUserController(usecase)
 
