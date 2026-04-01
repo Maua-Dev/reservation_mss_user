@@ -13,10 +13,9 @@ class ApigwConstruct(Construct):
         scope: Construct, 
         construct_id: str, 
         stage: str, 
+        stack_name: str,
         **kwargs
     ):
-        
-        self.stage = stage
         
         super().__init__(scope, construct_id, **kwargs)
         
@@ -28,9 +27,9 @@ class ApigwConstruct(Construct):
         
         self.rest_api = RestApi(
             self, 
-            id=f"ReservationMssUser_RestApi_{self.stage}",
-            rest_api_name=f"ReservationMssUser_RestApi_{self.stage}",
-            description=f"This is the ReservationMssUser RestApi for {self.stage}",
+            id=f"{stack_name}_RestApi_{stage}",
+            rest_api_name=f"{stack_name}_RestApi_{stage}",
+            description=f"This is the ReservationMssUser RestApi for {stage}",
             deploy_options=apigateway.StageOptions(
                 stage_name=stage.lower(),
                 logging_level=apigateway.MethodLoggingLevel.OFF,
