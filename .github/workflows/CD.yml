@@ -64,14 +64,10 @@ jobs:
           cd iac
           pip install -r requirements-infra.txt
 
-      - name: running bootstrap
-        run: |
-          cd iac
-          cdk bootstrap
-
       - name: DeployWithCDK
         run: |
           cd iac
+          cdk bootstrap
           cdk synth
           cdk deploy --require-approval never
 

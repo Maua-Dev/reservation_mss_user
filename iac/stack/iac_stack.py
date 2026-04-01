@@ -59,9 +59,8 @@ class IacStack(Stack):
             "DYNAMO_SORT_KEY": "SK",
             "REGION": Aws.REGION,
             
-            # essa variável vem do github actions como um secret
-            
-            "GRAPH_MICROSOFT_ENDPOINT": os.getenv("GRAPH_MICROSOFT_ENDPOINT")
+            # vem do GitHub Actions (secret). CDK exige string; getenv sem default vira None e quebra o synth.
+            "GRAPH_MICROSOFT_ENDPOINT": os.getenv("GRAPH_MICROSOFT_ENDPOINT", ""),
         }
 
         self.lambda_construct = LambdaConstruct(
