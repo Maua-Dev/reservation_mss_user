@@ -1,6 +1,7 @@
 import enum
 from enum import Enum
 import os
+from typing import Type
 
 #from src.shared.domain.observability.observability_interface import IObservability
 
@@ -64,7 +65,7 @@ class Environments:
             self.cloud_front_distribution_domain = os.environ.get("CLOUD_FRONT_DISTRIBUTION_DOMAIN")
 
     @staticmethod
-    def get_user_repo() -> IUserRepository:
+    def get_user_repo() -> Type[IUserRepository]:
         if Environments.get_envs().stage == STAGE.TEST:
             from src.shared.infra.repositories.user_repository_mock import UserRepositoryMock
             return UserRepositoryMock
@@ -73,6 +74,10 @@ class Environments:
             return UserRepositoryDynamo
         else:
             raise Exception("No repository found for this stage")
+
+    @staticmethod
+    def get_user_repo_instance() -> IUserRepository:
+        return Environments.get_user_repo()()
 
 
     # @staticmethod
