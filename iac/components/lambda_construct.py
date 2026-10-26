@@ -99,6 +99,14 @@ class LambdaConstruct(Construct):
             results_cache_ttl=Duration.seconds(0)
         )
 
+        self.login_function = self.create_lambda_api_gateway_integration(
+            module_name="login",
+            method="POST",
+            mss_student_api_resource=api_gateway_resource,
+            environment_variables=environment_variables,
+            authorizer=None,
+        )
+
         self.auth_user_function = self.create_lambda_api_gateway_integration(
             module_name="auth_user",
             method="GET",
@@ -154,5 +162,6 @@ class LambdaConstruct(Construct):
             self.delete_user_function, 
             self.update_user_function,
             self.auth_user_function,
+            self.login_function,
             authorizer_lambda,
         ]

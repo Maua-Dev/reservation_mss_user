@@ -10,6 +10,7 @@ from components.lambda_construct import LambdaConstruct
 from components.dynamo_construct import DynamoConstruct
 from components.apigw_construct import ApigwConstruct
 from components.ssm_construct import SsmConstruct
+from components.kms_construct import KMSConstruct
 
 import os
 
@@ -38,6 +39,13 @@ class IacStack(Stack):
             stage=stage,
             stack_name=stack_name
         )
+
+        self.kms_construct = KMSConstruct(
+            self,
+            construct_id=f"{stack_name}_KMS",
+            stage=stage,
+            stack_name=stack_name,
+        )
         
         self.ssm_construct = SsmConstruct(
             self,
@@ -61,7 +69,8 @@ class IacStack(Stack):
             
             # essa variável vem do github actions como um secret
             
-            "GRAPH_MICROSOFT_ENDPOINT": os.getenv("GRAPH_MICROSOFT_ENDPOINT")
+            "GRAPH_MICROSOFT_ENDPOINT": os.getenv("GRAPH_MICROSOFT_ENDPOINT"),
+            "LOGIN_KMS_SIGN_KEY_ARN": self.kms_construct.jwt_sign_key.key_arn,
         }
 
         self.lambda_construct = LambdaConstruct(
@@ -76,4 +85,8 @@ class IacStack(Stack):
         for function in self.lambda_construct.functions_that_need_dynamo_permissions:
             self.dynamo_construct.table.grant_read_write_data(function)
 
-        
+        self.kms_construct.jwt_sign_key.grant(
+            self.lambda_construct.login_function,
+            "kms:Sign",
+            "kms:GetPublicKey",
+        )
