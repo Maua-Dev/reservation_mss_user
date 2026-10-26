@@ -82,3 +82,5 @@ jobs:
           HIDDEN_COPY: ${{ vars.HIDDEN_COPY }}
           REPLY_TO_EMAIL: ${{ vars.REPLY_TO_EMAIL }}
           GRAPH_MICROSOFT_ENDPOINT: ${{ secrets.GRAPH_MICROSOFT_ENDPOINT }}
+          MICROSOFT_CLIENT_ID: ${{ secrets.MICROSOFT_CLIENT_ID }}
+          MICROSOFT_TENANT_ID: ${{ secrets.MICROSOFT_TENANT_ID }}
