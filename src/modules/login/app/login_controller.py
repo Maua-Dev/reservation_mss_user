@@ -22,9 +22,17 @@ class LoginController:
 
     def __call__(self, request: IRequest) -> IResponse:
         try:
-            
-            # pega da request um campo chamado id_token e faz as validações de MissingParameters e WrongType
-            # deve vir como string e é obrigatório
+            id_token = request.data.get("id_token")
+
+            if id_token is None:
+                raise MissingParameters("id_token")
+
+            if type(id_token) is not str:
+                raise WrongTypeParameter(
+                    fieldName="id_token",
+                    fieldTypeExpected="str",
+                    fieldTypeReceived=type(id_token).__name__,
+                )
 
             access_token, refresh_token, user = self.usecase(id_token=id_token)
             viewmodel = LoginViewmodel(access_token=access_token, user=user)
