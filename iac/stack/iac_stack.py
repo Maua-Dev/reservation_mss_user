@@ -66,6 +66,7 @@ class IacStack(Stack):
             "DYNAMO_PARTITION_KEY": "PK",
             "DYNAMO_SORT_KEY": "SK",
             "REGION": Aws.REGION,
+            "CORS_ALLOW_ORIGIN": self.apigw_construct.cors_allow_origin,
             
             # essa variável vem do github actions como um secret
             

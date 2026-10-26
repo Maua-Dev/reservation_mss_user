@@ -44,4 +44,6 @@ class TestLoginController:
         assert "Set-Cookie" in response.headers
         assert response.headers["Set-Cookie"].startswith("refresh_token=")
         assert "HttpOnly" in response.headers["Set-Cookie"]
+        assert "Secure" in response.headers["Set-Cookie"]
+        assert "SameSite=None" in response.headers["Set-Cookie"]
         usecase.assert_called_once_with(id_token="aaa.bbb.ccc")

@@ -12,7 +12,7 @@ from src.shared.helpers.external_interfaces.http_codes import (
 )
 
 _REFRESH_COOKIE = (
-    "refresh_token={token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800"
+    "refresh_token={token}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=604800"
 )
 
 

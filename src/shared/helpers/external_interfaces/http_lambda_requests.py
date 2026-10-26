@@ -1,6 +1,21 @@
 import json
+import os
 
 from src.shared.helpers.external_interfaces.http_models import HttpRequest, HttpResponse
+
+
+def _cors_headers_for_response() -> dict:
+    """
+    With credentials, Allow-Origin must be a single concrete origin (not *).
+    CORS_ALLOW_ORIGIN is injected per stage by the CDK stack.
+    """
+    allow_origin = os.environ.get("CORS_ALLOW_ORIGIN") or ""
+    if allow_origin:
+        return {
+            "Access-Control-Allow-Origin": allow_origin,
+            "Access-Control-Allow-Credentials": "true",
+        }
+    return {"Access-Control-Allow-Origin": "*"}
 
 
 class LambdaHttpResponse(HttpResponse):
@@ -22,13 +37,11 @@ class LambdaHttpResponse(HttpResponse):
             **kwargs: Configuration of the HTTP response. Possible values: add_default_cors_headers (default is True)
         """
         _body = body or LambdaHttpResponse.body
-        _headers = headers or LambdaHttpResponse.headers
-        _headers['Access-Control-Allow-Origin'] = '*'
-
+        _headers = dict(headers) if headers is not None else dict(LambdaHttpResponse.headers)
         _status_code = status_code or LambdaHttpResponse.status_code
 
         if kwargs.get("add_default_cors_headers", True):
-            _headers.update({"Access-Control-Allow-Origin": "*"})
+            _headers.update(_cors_headers_for_response())
 
         super().__init__(body=_body, headers=_headers, status_code=_status_code)
 
