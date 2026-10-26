@@ -14,6 +14,9 @@ from src.shared.domain.entities.user import User
 from src.shared.domain.repositories.user_repository_interface import IUserRepository
 from src.shared.helpers.errors.usecase_errors import EnvVarNotFound, InvalidJwtFormat, NoItemsFound
 
+MICROSOFT_TENANT_ID = os.environ.get("MICROSOFT_TENANT_ID")
+MICROSOFT_CLIENT_ID = os.environ.get("MICROSOFT_CLIENT_ID")
+
 # URL pública onde a Microsoft publica as chaves para validar a assinatura do id_token.
 _MICROSOFT_JWKS_URI = (
     f"https://login.microsoftonline.com/{MICROSOFT_TENANT_ID}/discovery/v2.0/keys"
