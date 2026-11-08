@@ -56,7 +56,20 @@ def _is_jwt_shape(token: str) -> bool:
 
     Imports já no topo: base64, e a regex _JWT_B64.
     """
-    raise NotImplementedError("_is_jwt_shape")
+    split_token = token.split(".")
+    if len(split_token) != 3:
+        return False
+
+    for partition in split_token:
+        if not partition or _JWT_B64.fullmatch(partition) is None:
+            return False
+        padding = "=" * (-len(partition) % 4)
+        try:
+            base64.urlsafe_b64decode(partition + padding)
+        except Exception:
+            return False
+
+    return True
 
 
 def _b64url(data: bytes) -> str:
