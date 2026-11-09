@@ -7,6 +7,7 @@ from typing import Type
 
 
 from src.shared.domain.repositories.user_repository_interface import IUserRepository
+from src.shared.domain.repositories.session_repository_interface import ISessionRepository
 
 
 class STAGE(Enum):
@@ -79,6 +80,18 @@ class Environments:
     def get_user_repo_instance() -> IUserRepository:
         return Environments.get_user_repo()()
 
+    @staticmethod
+    def get_session_repo() -> Type[ISessionRepository]:
+        if Environments.get_envs().stage == STAGE.TEST:
+            from src.shared.infra.repositories.session_repository_mock import SessionRepositoryMock
+            return SessionRepositoryMock
+        else:
+            raise Exception("No repository found for this stage")
+
+    @staticmethod
+    def get_session_repo_instance() -> ISessionRepository:
+        return Environments.get_session_repo()()
+
 
     # @staticmethod
     # def get_observability() -> IObservability:
@@ -104,4 +117,3 @@ class Environments:
 
     def __repr__(self):
         return self.__dict__
-
