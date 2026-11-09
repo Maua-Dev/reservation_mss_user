@@ -7,7 +7,7 @@ from typing import Type
 
 
 from src.shared.domain.repositories.user_repository_interface import IUserRepository
-from src.shared.domain.repositories.session_repository_interface import ISessionRepository  # ← NOVO
+from src.shared.domain.repositories.session_repository_interface import ISessionRepository
 
 
 class STAGE(Enum):
