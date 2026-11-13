@@ -85,3 +85,10 @@ class IacStack(Stack):
 
         for function in self.lambda_construct.functions_that_need_dynamo_permissions:
             self.dynamo_construct.table.grant_read_write_data(function)
+
+        self.kms_construct.jwt_sign_key.grant(
+            self.lambda_construct.refresh_function,
+            "kms:Sign",
+            "kms:Verify",
+            "kms:GetPublicKey",
+        )
